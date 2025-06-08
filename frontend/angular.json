@@ -61,8 +61,7 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "proxyConfig": "proxy.conf.json"
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -74,7 +73,8 @@
               "buildTarget": "magazin-calculatoare:build:production"
             },
             "development": {
-              "buildTarget": "magazin-calculatoare:build:development"
+              "buildTarget": "magazin-calculatoare:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
