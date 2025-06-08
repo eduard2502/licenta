@@ -38,7 +38,7 @@ public class ProductService {
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
         dto.setStockQuantity(product.getStockQuantity());
-        dto.setImageBase64(product.getImageBase64());
+      //  dto.setImageBase64(product.getImageBase64());
         if (product.getCategory() != null) {
             dto.setCategoryId(product.getCategory().getId());
             dto.setCategoryName(product.getCategory().getName());
@@ -61,7 +61,7 @@ public class ProductService {
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
         product.setStockQuantity(productDto.getStockQuantity());
-        product.setImageBase64(productDto.getImageBase64());
+       // product.setImageBase64(productDto.getImageBase64());
 
         if (productDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(productDto.getCategoryId())

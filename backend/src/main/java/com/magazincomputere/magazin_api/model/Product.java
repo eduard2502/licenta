@@ -1,49 +1,63 @@
+// src/main/java/com/magazincomputere/magazin_api/model/Product.java
 package com.magazincomputere.magazin_api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 255)
+    @NotBlank(message = "Numele produsului este obligatoriu")
+    @Size(min = 3, max = 255, message = "Numele produsului trebuie să aibă între 3 și 255 de caractere")
+    @Column(nullable = false)
     private String name;
 
-    @Lob // Pentru texte mai lungi
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
-
+    @NotNull(message = "Prețul este obligatoriu")
+    @DecimalMin(value = "0.01", message = "Prețul trebuie să fie pozitiv")
     @Column(nullable = false)
-    private Integer stockQuantity = 0; // Valoare implicită
+   private BigDecimal price;
 
-    @Lob
-    @Column(columnDefinition = "TEXT") // Pentru stocarea imaginii ca string Base64
-    private String imageBase64;
+    @NotNull(message = "Cantitatea în stoc este obligatorie")
+    @Min(value = 0, message = "Stocul nu poate fi negativ")
+    @Column(nullable = false)
+    private Integer stockQuantity;
 
-    @ManyToOne(fetch = FetchType.EAGER) // EAGER pentru a încărca categoria odată cu produsul
-    @JoinColumn(name = "category_id", nullable = false) // Un produs trebuie să aibă o categorie
+    // @Lob // Adnotarea @Lob este importantă pentru câmpuri mari de tip TEXT în unele baze de date
+    // @Column(columnDefinition = "TEXT") // Asigură-te că tipul de coloană este adecvat pentru base64
+    // private String imageBase64; // COMENTAT TEMPORAR
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", nullable = false)
+    @NotNull(message = "Categoria este obligatorie")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private List<ProductSpecificationValue> specifications = new ArrayList<>();
+    private List<ProductSpecificationValue> specifications;
+
+    public Product(Long id) {
+        this.id = id;
+    }
 }

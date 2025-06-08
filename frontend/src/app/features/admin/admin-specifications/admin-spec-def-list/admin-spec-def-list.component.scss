@@ -1,0 +1,76 @@
+// src/app/features/admin/admin-specifications/admin-spec-def-list/admin-spec-def-list.component.scss
+.admin-spec-def-list-container {
+  padding: 20px;
+  max-width: 900px; // Lățime adecvată pentru tabel
+  margin: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  h2 {
+    margin: 0;
+  }
+  button mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.filter-field {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.loading-indicator,
+.error-message,
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #757575;
+  mat-spinner {
+    margin: 0 auto 10px auto;
+  }
+}
+
+.error-message {
+  color: #f44336; // Material Red
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: right;
+}
+
+.mat-column-id {
+  max-width: 80px;
+}
+.mat-column-unit {
+  max-width: 150px;
+}
+
+.mat-header-cell {
+  font-weight: 500;
+  color: rgba(0,0,0,0.67);
+}
+
+.mat-row:hover {
+  background-color: rgba(0,0,0,0.03);
+}
+
+.mat-cell, .mat-header-cell {
+  padding: 8px 16px;
+}

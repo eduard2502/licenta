@@ -1,20 +1,27 @@
 // src/app/auth/user.guard.ts
-import { Injectable }     from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
-import { AuthService }    from './auth.service';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, UrlTree, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { AuthService } from './auth.service';
 
-@Injectable({ providedIn: 'root' })
-export class UserGuard implements CanActivate {
-  constructor(private auth: AuthService, private router: Router) {}
+export const userGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
- canActivate(): boolean | UrlTree {
-  if (!this.auth.isLoggedIn) {
-    return this.router.createUrlTree(['/login']);
+  if (authService.isLoggedIn() && authService.role === 'user') {
+    return true;
+  } else if (authService.isLoggedIn() && authService.role !== 'user') {
+    // Utilizator logat dar nu e 'user' (ex: admin)
+    console.warn('UserGuard: User is logged in but not a regular user. Role:', authService.role);
+    if (authService.role === 'admin') {
+      // Poți decide să permiți adminilor accesul sau să îi redirecționezi
+      // return true; // Permite adminului să acceseze și paginile de user
+      return router.createUrlTree(['/admin']); // Redirecționează adminul la panoul său
+    }
+    // Alt rol necunoscut, redirecționează la login
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+  } else {
+    // Utilizator nelogat
+    console.warn('UserGuard: User not logged in. Redirecting to /login with returnUrl:', state.url);
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
-  if (this.auth.role !== 'user') {
-    // dacă nu eşti user, nu ai voie aici
-    return this.router.createUrlTree(['/login']);
-  }
-  return true;
-}
-}
+};

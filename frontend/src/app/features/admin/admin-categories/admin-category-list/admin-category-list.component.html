@@ -1,0 +1,41 @@
+<!-- src/app/features/admin/admin-categories/admin-category-list/admin-category-list.component.html -->
+<div class="admin-category-list-container">
+  <div class="header">
+    <h2>Administrare Categorii</h2>
+    <button mat-raised-button color="primary" routerLink="/admin/categories/new">
+      <mat-icon>add</mat-icon> Adaugă Categorie Nouă
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>Se încarcă categoriile...</p>
+    <!-- Poți adăuga un spinner Angular Material aici -->
+    <!-- <mat-spinner diameter="40"></mat-spinner> -->
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-message">
+    <p>{{ error }}</p>
+    <button mat-stroked-button color="warn" (click)="loadCategories()">Reîncearcă</button>
+  </div>
+
+  <div *ngIf="!isLoading && !error && categories.length === 0" class="no-data">
+    <p>Nu există categorii definite.</p>
+  </div>
+
+  <mat-list *ngIf="!isLoading && !error && categories.length > 0" role="list">
+    <h3 mat-subheader>Categorii Existente</h3>
+    <mat-list-item *ngFor="let category of categories" role="listitem" class="category-item">
+      <mat-icon matListItemIcon>folder_open</mat-icon>
+      <span matListItemTitle>{{ category.name }}</span>
+      <span matListItemLine class="description">{{ category.description || 'Fără descriere' }}</span>
+      <span matListItemMeta class="actions">
+        <button mat-icon-button color="primary" [routerLink]="['/admin/categories/edit', category.id]" aria-label="Editează categoria">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteCategory(category.id!)" [disabled]="isLoading" aria-label="Șterge categoria">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </span>
+    </mat-list-item>
+  </mat-list>
+</div>

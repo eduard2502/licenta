@@ -1,41 +1,35 @@
+// src/main/java/com/magazincomputere/magazin_api/repository/OrderRepository.java
 package com.magazincomputere.magazin_api.repository;
 
 import com.magazincomputere.magazin_api.model.Order;
+import com.magazincomputere.magazin_api.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // Găsește toate comenzile pentru un anumit ID de utilizator
-    List<Order> findByUserIdOrderByOrderDateDesc(Long userId);
+    /**
+     * Găsește toate comenzile pentru un utilizator specific, ordonate descrescător după data comenzii.
+     * @param user Utilizatorul pentru care se caută comenzile.
+     * @return O listă de comenzi.
+     */
+    List<Order> findByUserOrderByOrderDateDesc(User user);
 
-    // Găsește toate comenzile pentru un anumit ID de client
-    List<Order> findByCustomerIdOrderByOrderDateDesc(Long customerId);
+    /**
+     * Găsește toate comenzile cu un anumit status, ordonate descrescător după data comenzii.
+     * @param status Statusul comenzii.
+     * @return O listă de comenzi.
+     */
+    List<Order> findByStatusOrderByOrderDateDesc(String status);
 
-    // Găsește comenzi după status
-    List<Order> findByStatus(String status);
+    /**
+     * Găsește toate comenzile, ordonate descrescător după data comenzii.
+     * @return O listă cu toate comenzile ordonate.
+     */
+    List<Order> findAllByOrderByOrderDateDesc();
 
-    // Găsește comenzi plasate într-un interval de date
-    List<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
-
-    // Găsește comenzi plasate într-un interval de date și cu un anumit status
-    List<Order> findByStatusAndOrderDateBetween(String status, LocalDateTime startDate, LocalDateTime endDate);
-
-    // Pentru rapoarte: comenzi pentru o anumită categorie de produs într-un interval de timp
-    // Acest lucru este mai complex și ar necesita probabil un @Query cu JOIN-uri
-    // către OrderItem și Product pentru a filtra după categoryId din Product.
-    // Exemplu de schelet pentru o astfel de interogare (necesită ajustare):
-    /*
-    @Query("SELECT o FROM Order o JOIN o.orderItems oi JOIN oi.product p WHERE p.category.id = :categoryId AND o.orderDate BETWEEN :startDate AND :endDate")
-    List<Order> findOrdersByProductCategoryAndDateRange(
-        @Param("categoryId") Long categoryId,
-        @Param("startDate") LocalDateTime startDate,
-        @Param("endDate") LocalDateTime endDate
-    );
-    */
+    // Poți adăuga și alte metode custom de interogare aici dacă este necesar.
 }

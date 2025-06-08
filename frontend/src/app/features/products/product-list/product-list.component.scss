@@ -1,4 +1,76 @@
-/* src/app/features/products/product-list/product-list.component.scss */
-.product-card {
-  margin: 1rem 0;
+// src/app/features/products/product-list/product-list.component.scss
+.admin-product-list-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  h2 {
+    margin: 0;
+  }
+  button mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.filter-field {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
+}
+
+.loading-indicator,
+.error-message,
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #757575;
+  mat-spinner {
+    margin: 0 auto 10px auto;
+  }
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  width: 150px;
+  text-align: right;
+}
+
+.mat-column-id {
+  max-width: 80px;
+}
+.mat-column-price, .mat-column-stockQuantity {
+  max-width: 120px;
+  text-align: right;
+}
+.mat-header-cell {
+  font-weight: 500;
+  color: rgba(0,0,0,0.67);
+}
+
+.mat-row:hover {
+  background-color: rgba(0,0,0,0.03);
+}
+
+.mat-cell, .mat-header-cell {
+  padding: 8px 16px;
 }

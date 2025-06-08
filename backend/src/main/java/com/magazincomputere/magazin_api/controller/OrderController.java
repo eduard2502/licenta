@@ -1,9 +1,12 @@
+// src/main/java/com/magazincomputere/magazin_api/controller/OrderController.java
 package com.magazincomputere.magazin_api.controller;
 
-import com.magazincomputere.magazin_api.dto.OrderDto; // Va trebui să creezi OrderDto și OrderItemDto
-import com.magazincomputere.magazin_api.dto.OrderStatusUpdateDto; // DTO pentru actualizarea stării
-import com.magazincomputere.magazin_api.service.OrderService; // Va trebui să creezi OrderService
-import com.magazincomputere.magazin_api.security.services.UserDetailsImpl; // Pentru a obține userul curent
+import com.magazincomputere.magazin_api.dto.OrderDto;
+import com.magazincomputere.magazin_api.dto.OrderStatusUpdateDto; // Asigură-te că acest DTO este importat
+import com.magazincomputere.magazin_api.model.User; // Nu este folosit direct, dar poate rămâne
+import com.magazincomputere.magazin_api.repository.UserRepository; // Nu este folosit direct, dar poate rămâne
+import com.magazincomputere.magazin_api.security.services.UserDetailsImpl;
+import com.magazincomputere.magazin_api.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,24 +20,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
+    // @Autowired // Nu este folosit direct aici, poate fi eliminat dacă nu e necesar pentru altceva
+    // private UserRepository userRepository;
+
     @PostMapping
-    @PreAuthorize("isAuthenticated()") // Utilizatorii logați (USER sau ADMIN) pot plasa comenzi
-    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderDto orderDto) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody OrderDto orderDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getId();
-        try {
-            OrderDto createdOrder = orderService.createOrder(orderDto, userId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
-        } catch (Exception e) {
-            // Loghează excepția e.getMessage()
-            return ResponseEntity.badRequest().body("Eroare la crearea comenzii: " + e.getMessage());
-        }
+
+        OrderDto createdOrder = orderService.createOrder(orderDto, userId);
+        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
     @GetMapping("/my-history")
@@ -43,33 +46,32 @@ public class OrderController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getId();
-        List<OrderDto> orders = orderService.getOrderHistoryForUser(userId);
+        // Folosește numele corect al metodei din OrderService
+        List<OrderDto> orders = orderService.getOrdersByUser(userId); // <<< CORECTAT AICI
         return ResponseEntity.ok(orders);
     }
 
-    // Endpoint-uri pentru ADMIN
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<OrderDto>> getAllOrders(
-        @RequestParam(required = false) String status // Exemplu de filtrare opțională
-    ) {
-        return ResponseEntity.ok(orderService.getAllOrders(status));
+    public ResponseEntity<List<OrderDto>> getAllOrders(@RequestParam(required = false) String status) {
+        List<OrderDto> orders = orderService.getAllOrders(status);
+        return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{orderId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OrderDto> getOrderByIdForAdmin(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.getOrderById(id));
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId) {
+        OrderDto orderDto = orderService.getOrderById(orderId);
+        return ResponseEntity.ok(orderDto);
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusUpdateDto statusUpdateDto) {
-        try {
-             OrderDto updatedOrder = orderService.updateOrderStatus(id, statusUpdateDto.getNewStatus()); // Presupunând că OrderStatusUpdateDto are un câmp newStatus
-             return ResponseEntity.ok(updatedOrder);
-         } catch (Exception e) {
-             return ResponseEntity.badRequest().body("Eroare la actualizarea stării comenzii: " + e.getMessage());
-         }
+    public ResponseEntity<OrderDto> updateOrderStatus(
+            @PathVariable Long orderId,
+            @Valid @RequestBody OrderStatusUpdateDto statusUpdateDto) { // <<< CORECTAT AICI: Primește DTO-ul
+        // Transmite DTO-ul la serviciu
+        OrderDto updatedOrder = orderService.updateOrderStatus(orderId, statusUpdateDto); // <<< CORECTAT AICI
+        return ResponseEntity.ok(updatedOrder);
     }
 }

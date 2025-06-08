@@ -1,7 +1,62 @@
-/* src/app/app.component.scss */
+// src/app/app.component.scss
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000; // Asigură-te că e deasupra altor elemente
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); // O umbră subtilă
 
-/* Poţi adăuga aici stiluri globale pentru AppComponent */
-:host {
-  display: block;
-  min-height: 100vh;
+  .app-title {
+    margin-left: 8px;
+    cursor: pointer; // Indică faptul că e clickabil
+    font-size: 1.25em;
+  }
+
+  .toolbar-spacer {
+    flex: 1 1 auto; // Ocupă spațiul disponibil
+  }
+
+  button[mat-button], button[mat-stroked-button], button[mat-icon-button] {
+    margin-left: 8px;
+    margin-right: 8px;
+    text-transform: uppercase; // Opțional, pentru un aspect mai formal
+    font-weight: 500;
+
+    mat-icon:not(.mat-badge) { // Nu aplica la iconița de badge
+      margin-right: 6px; // Spațiu între iconiță și text
+      vertical-align: middle;
+    }
+  }
+
+  .auth-button {
+    border-color: rgba(255,255,255,0.7); // Pentru butoanele stroked pe fundal primar
+    color: white;
+    &:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+  }
+
+  .user-menu-button {
+    span {
+      margin-left: 6px;
+      margin-right: 2px;
+    }
+  }
+}
+
+// Ajustează conținutul principal dacă toolbar-ul este vizibil
+.main-content {
+  padding-top: 64px; // Înălțimea standard a toolbar-ului Material
+  height: calc(100vh - 64px);
+  overflow-y: auto; // Permite scroll pentru conținutul principal
+}
+
+// Dacă toolbar-ul e ascuns, conținutul ocupă tot ecranul
+.main-content.no-toolbar {
+  padding-top: 0;
+  height: 100vh;
+}
+
+// Stil pentru badge-ul de pe coș (opțional)
+::ng-deep .mat-badge-content {
+  font-size: 10px; // Mărime mai mică pentru textul din badge
 }

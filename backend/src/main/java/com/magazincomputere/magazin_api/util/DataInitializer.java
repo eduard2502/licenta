@@ -1,53 +1,71 @@
-package com.magazincomputere.magazin_api.util; // Sau pachetul tău de config/util
+// src/main/java/com/magazincomputere/magazin_api/util/DataInitializer.java
+package com.magazincomputere.magazin_api.util;
 
 import com.magazincomputere.magazin_api.model.ERole;
 import com.magazincomputere.magazin_api.model.Role;
 import com.magazincomputere.magazin_api.repository.RoleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component // Important pentru ca Spring să o detecteze și să ruleze bean-ul CommandLineRunner
-public class DataInitializer {
+/**
+ * Această componentă rulează o singură dată la pornirea aplicației.
+ * Scopul său este să inițializeze datele esențiale în baza de date,
+ * cum ar fi rolurile de utilizator.
+ */
+@Component
+public class DataInitializer implements CommandLineRunner {
 
-    @Bean // Acest bean va fi executat la pornirea aplicației
-    CommandLineRunner initRoles(RoleRepository roleRepository) {
-        return args -> {
-            // Verifică și adaugă ROLE_USER dacă nu există
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    /**
+     * Această metodă va fi executată la pornirea aplicației Spring Boot.
+     */
+    @Override
+    public void run(String... args) throws Exception {
+        
+        // ==============================================================================
+        // == GENERAREA HASH-URILOR PENTRU PAROLE (SCOP TEMPORAR) ==
+        // ==============================================================================
+        System.out.println("====================================================================");
+        System.out.println("Parola pentru 'admin123' encodata: " + passwordEncoder.encode("admin123"));
+        System.out.println("Parola pentru 'user123' encodata: " + passwordEncoder.encode("user123"));
+        System.out.println("====================================================================");
+        // ==============================================================================
+
+
+        // ==============================================================================
+        // == INIȚIALIZAREA ROLURILOR ÎN BAZA DE DATE ==
+        // ==============================================================================
+        try {
+            // Verifică dacă rolul ROLE_USER există
             if (roleRepository.findByName(ERole.ROLE_USER).isEmpty()) {
-                Role userRole = new Role(); // Presupunând că ai un constructor implicit
+                // Creează un obiect Role folosind constructorul fără argumente
+                Role userRole = new Role();
+                // Setează numele rolului
                 userRole.setName(ERole.ROLE_USER);
-                roleRepository.save(userRole);
-                System.out.println("Initialized ROLE_USER");
+                // Salvează obiectul în baza de date
+                roleRepository.save(userRole); // <<< CORECTAT
+                System.out.println("Rolul ROLE_USER a fost adăugat în baza de date.");
             }
 
-            // Verifică și adaugă ROLE_ADMIN dacă nu există
+            // Verifică dacă rolul ROLE_ADMIN există
             if (roleRepository.findByName(ERole.ROLE_ADMIN).isEmpty()) {
-                Role adminRole = new Role(); // Presupunând că ai un constructor implicit
+                // Creează un obiect Role folosind constructorul fără argumente
+                Role adminRole = new Role();
+                // Setează numele rolului
                 adminRole.setName(ERole.ROLE_ADMIN);
-                roleRepository.save(adminRole);
-                System.out.println("Initialized ROLE_ADMIN");
+                // Salvează obiectul în baza de date
+                roleRepository.save(adminRole); // <<< CORECTAT
+                System.out.println("Rolul ROLE_ADMIN a fost adăugat în baza de date.");
             }
-        };
+        } catch (Exception e) {
+            System.err.println("Eroare la inițializarea rolurilor: " + e.getMessage());
+        }
     }
-
-    // Opțional: Poți adăuga aici și crearea unui utilizator admin default
-    // Asigură-te că faci asta DUPĂ ce rolurile sunt create și că gestionezi cazul în care userul admin deja există.
-    /*
-    @Bean
-    CommandLineRunner initAdminUser(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        return args -> {
-            if (userRepository.findByUsername("admin").isEmpty()) {
-                User adminUser = new User("admin", "admin@magazin.com", passwordEncoder.encode("admin123"));
-                Set<Role> roles = new HashSet<>();
-                Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                   .orElseThrow(() -> new RuntimeException("Error: Role ADMIN is not found for default admin user."));
-                roles.add(adminRole);
-                adminUser.setRoles(roles);
-                userRepository.save(adminUser);
-                System.out.println("Initialized default ADMIN user.");
-            }
-        };
-    }
-    */
 }

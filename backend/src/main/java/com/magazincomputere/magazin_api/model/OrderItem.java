@@ -1,54 +1,54 @@
+// src/main/java/com/magazincomputere/magazin_api/model/OrderItem.java
 package com.magazincomputere.magazin_api.model;
-
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
 @Table(name = "order_items")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private Order order;
 
-    // Stochează ID-ul produsului și alte detalii relevante la momentul comenzii
-    // pentru a evita probleme dacă produsul este șters sau modificat ulterior.
+    @NotNull(message = "ID-ul produsului este obligatoriu pentru un articol de comandă")
     @Column(nullable = false)
-    private Long productIdSnapshot; // ID-ul produsului la momentul comenzii
+    private Long productIdSnapshot;
 
+    @NotNull(message = "Numele produsului este obligatoriu")
     @Column(nullable = false)
-    private String productNameSnapshot; // Numele produsului la momentul comenzii
+    private String productNameSnapshot;
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
-    private String productImageBase64Snapshot; // Imaginea produsului la momentul comenzii
+    // @Lob
+    // @Column(columnDefinition = "TEXT")
+    // private String productImageBase64Snapshot; // COMENTAT TEMPORAR
 
+    @NotNull(message = "Cantitatea este obligatorie")
+    @Min(value = 1, message = "Cantitatea trebuie să fie cel puțin 1")
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal priceAtPurchase; // Prețul unitar al produsului la momentul comenzii
+    @NotNull(message = "Prețul la achiziție este obligatoriu")
+    @Column(nullable = false)
+    private BigDecimal priceAtPurchase;
 
-    @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal lineTotal; // quantity * priceAtPurchase
-
-    // Dacă vrei o legătură directă la entitatea Product (poate fi utilă, dar gestionează cu atenție
-    // dacă produsul poate fi șters și comanda trebuie să existe în continuare)
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)) // Permite product_id null dacă produsul e șters
-    // private Product product;
+    @NotNull(message = "Totalul liniei este obligatoriu")
+    @Column(nullable = false)
+    private BigDecimal lineTotal;
 }

@@ -1,23 +1,48 @@
 <!-- src/app/login/login.component.html -->
-<mat-card class="login-card">
-  <mat-card-header>
-    <mat-card-title>Autentificare</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Username</mat-label>
-        <input matInput formControlName="username" />
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Parolă</mat-label>
-        <input matInput type="password" formControlName="password" />
-      </mat-form-field>
-      <div class="error" *ngIf="error">{{ error }}</div>
-      <button mat-raised-button color="accent" class="full-width" type="submit">
-        Loghează-te
-      </button>
-    </form>
-  </mat-card-content>
-</mat-card>
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Autentificare</mat-card-title>
+      <mat-card-subtitle>Intră în contul tău</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nume de Utilizator</mat-label>
+          <input matInput formControlName="username" placeholder="Ex: ion.popescu" required>
+          <mat-icon matSuffix>person_outline</mat-icon>
+          <mat-error *ngIf="f['username'].hasError('required')">
+            Numele de utilizator este obligatoriu.
+          </mat-error>
+          <mat-error *ngIf="f['username'].hasError('minlength')">
+            Numele de utilizator trebuie să aibă cel puțin 3 caractere.
+          </mat-error>
+        </mat-form-field>
 
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Parolă</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button" [attr.aria-label]="'Ascunde/Arată parola'" [attr.aria-pressed]="hidePassword">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="f['password'].hasError('required')">
+            Parola este obligatorie.
+          </mat-error>
+          <mat-error *ngIf="f['password'].hasError('minlength')">
+            Parola trebuie să aibă cel puțin 6 caractere.
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" class="full-width login-button" [disabled]="isLoading || loginForm.invalid">
+          <mat-spinner *ngIf="isLoading" diameter="20" mode="indeterminate" class="button-spinner"></mat-spinner>
+          <span *ngIf="!isLoading">Intră în Cont</span>
+        </button>
+      </form>
+    </mat-card-content>
+    <mat-card-actions class="login-card-actions-center"> <!-- Am adăugat o clasă pentru centrare CSS -->
+      <p class="signup-link">
+        Nu ai cont? <a routerLink="/signup">Înregistrează-te aici!</a>
+      </p>
+    </mat-card-actions>
+  </mat-card>
+</div>

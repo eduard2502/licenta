@@ -1,18 +1,71 @@
-/* src/app/app.component.scss */
-.layout {
-  height: 100vh;
+// src/app/features/admin-dashboard/admin-dashboard.component.scss
+
+.admin-dashboard-container {
+  height: 100vh; // Ocupă întreaga înălțime a viewport-ului
+  display: flex;
 }
 
-.content {
-  padding: 1rem;
+.admin-sidenav {
+  width: 250px; // Lățime fixă pentru sidenav
+  background-color: #f5f5f5; // O culoare de fundal neutră
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+  .sidenav-header {
+    padding: 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    h3 {
+      margin: 0;
+      font-size: 1.2em;
+      color: #3f51b5; // Culoarea primară Material
+    }
+  }
+
+  mat-nav-list {
+    padding-top: 8px;
+  }
+
+  a[mat-list-item] {
+    color: rgba(0, 0, 0, 0.87);
+    border-left: 4px solid transparent; // Pentru indicatorul active-link
+    transition: background-color 0.3s, border-left-color 0.3s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    &.active-link {
+      background-color: rgba(63, 81, 181, 0.1); // O nuanță a culorii primare
+      color: #3f51b5; // Culoarea primară
+      border-left-color: #3f51b5;
+      font-weight: 500;
+
+      mat-icon {
+        color: #3f51b5;
+      }
+    }
+
+    mat-icon[matListItemIcon] {
+      margin-right: 16px;
+      color: rgba(0,0,0,0.54);
+    }
+  }
+
+  mat-divider {
+    margin: 8px 0;
+  }
 }
 
-mat-sidenav {
-  width: 200px;
+.admin-content {
+  flex-grow: 1; // Ocupă spațiul rămas
+  padding: 20px; // Spațiere internă pentru conținut
+  overflow-y: auto; // Scroll dacă conținutul depășește înălțimea
+  background-color: #fafafa; // Un fundal foarte deschis pentru conținut
 }
 
-mat-toolbar.mat-primary {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
+// Stiluri opționale pentru toolbar dacă îl adaugi în admin-content
+// mat-toolbar {
+//   position: sticky;
+//   top: 0;
+//   z-index: 1000; // Asigură-te că e deasupra altor elemente
+// }

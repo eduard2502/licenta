@@ -1,16 +1,16 @@
+// src/main/java/com/magazincomputere/magazin_api/service/OrderService.java
 package com.magazincomputere.magazin_api.service;
 
 import com.magazincomputere.magazin_api.dto.OrderDto;
 import com.magazincomputere.magazin_api.dto.OrderItemDto;
+import com.magazincomputere.magazin_api.dto.OrderStatusUpdateDto;
 import com.magazincomputere.magazin_api.exception.BadRequestException;
 import com.magazincomputere.magazin_api.exception.ResourceNotFoundException;
-import com.magazincomputere.magazin_api.model.*; // Import User, Customer, Product, Order, OrderItem
-import com.magazincomputere.magazin_api.repository.*; // Import toate repository-urile necesare
+import com.magazincomputere.magazin_api.model.*;
+import com.magazincomputere.magazin_api.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.magazincomputere.magazin_api.model.Order; // Asigură-te că importul este corect
-import com.magazincomputere.magazin_api.model.OrderItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,92 +21,91 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    // ... injectările tale (OrderRepository, UserRepository, etc.) ...
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CustomerRepository customerRepository;
+
+    // @Autowired // Comentat - presupunem salvare prin cascadă din Order
+    // private OrderItemRepository orderItemRepository; 
+
     @Autowired
     private ProductRepository productRepository;
-    // @Autowired private OrderItemRepository orderItemRepository; // Decomentează dacă îl folosești direct
 
-    // --- Metode de conversie DTO <-> Entity ---
-    // Acestea trebuie să fie metode helper, cel mai probabil private
-    private OrderDto convertOrderToDto(Order order) { // PARAMETRUL 'order' NU este un bean injectat
-        OrderDto dto = new OrderDto();
-        dto.setId(order.getId());
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    private OrderDto convertToDto(Order order) {
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(order.getId());
         if (order.getUser() != null) {
-            dto.setUserId(order.getUser().getId());
-            dto.setUsername(order.getUser().getUsername());
+            orderDto.setUserId(order.getUser().getId());
+            orderDto.setUsername(order.getUser().getUsername());
         } else if (order.getCustomer() != null) {
-             dto.setUsername(order.getCustomer().getFirstName() != null ? order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName() : order.getCustomer().getEmail());
+             orderDto.setUsername(order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName());
         }
-        dto.setOrderDate(order.getOrderDate());
-        dto.setStatus(order.getStatus());
-        dto.setTotalAmount(order.getTotalAmount());
-        dto.setShippingAddress(order.getShippingAddress());
-        dto.setCustomerName(order.getShippingCustomerName());
-        dto.setCustomerEmail(order.getShippingCustomerEmail());
-        dto.setCustomerPhone(order.getShippingCustomerPhone());
+        orderDto.setOrderDate(order.getOrderDate());
+        orderDto.setStatus(order.getStatus());
+        orderDto.setTotalAmount(order.getTotalAmount()); // Direct BigDecimal to BigDecimal
+
+
+        orderDto.setCustomerName(order.getShippingCustomerName());
+        orderDto.setShippingAddress(order.getShippingAddress());
+        orderDto.setCustomerEmail(order.getShippingCustomerEmail());
+        orderDto.setCustomerPhone(order.getShippingCustomerPhone());
 
         if (order.getOrderItems() != null) {
-            dto.setOrderItems(order.getOrderItems().stream()
-                    .map(this::convertOrderItemToDto).collect(Collectors.toList()));
+            orderDto.setOrderItems(order.getOrderItems().stream()
+                    .map(this::convertOrderItemToDto)
+                    .collect(Collectors.toList()));
         }
-        return dto;
+        return orderDto;
     }
 
-    private OrderItemDto convertOrderItemToDto(OrderItem item) { // PARAMETRUL 'item' NU este un bean injectat
+    private OrderItemDto convertOrderItemToDto(OrderItem orderItem) {
         OrderItemDto dto = new OrderItemDto();
-        dto.setId(item.getId());
-        dto.setProductId(item.getProductIdSnapshot());
-        dto.setProductName(item.getProductNameSnapshot());
-        dto.setProductImageBase64(item.getProductImageBase64Snapshot());
-        dto.setQuantity(item.getQuantity());
-        dto.setPriceAtPurchase(item.getPriceAtPurchase());
+        dto.setId(orderItem.getId());
+        dto.setProductId(orderItem.getProductIdSnapshot());
+        dto.setProductNameSnapshot(orderItem.getProductNameSnapshot());
+        dto.setQuantity(orderItem.getQuantity());
+        dto.setPriceAtPurchase(orderItem.getPriceAtPurchase()); // Direct BigDecimal to BigDecimal
+        dto.setLineTotal(orderItem.getLineTotal()); // Direct BigDecimal to BigDecimal
         return dto;
     }
-    // --- Sfârșit metode de conversie ---
 
-    // ... restul metodelor din OrderService (createOrder, getOrderHistoryForUser, etc.) ...
-    // Asigură-te că aceste metode publice sunt cele care sunt apelate de controller
-    // și ele, la rândul lor, apelează metodele private de conversie.
+
     @Transactional
-    public OrderDto createOrder(OrderDto orderDto, Long userIdRequesting) {
-        User user = userRepository.findById(userIdRequesting)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userIdRequesting));
+    public OrderDto createOrder(OrderDto orderDto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        Customer customer = customerRepository.findByUserId(user.getId())
-            .orElseGet(() -> {
-                Customer newCustomer = new Customer();
-                newCustomer.setUser(user);
-                newCustomer.setEmail(user.getEmail()); 
-                if (orderDto.getCustomerName() != null && !orderDto.getCustomerName().isEmpty()) {
-                    String[] names = orderDto.getCustomerName().trim().split("\\s+");
-                    newCustomer.setFirstName(names[0]);
-                    if (names.length > 1) {
-                        newCustomer.setLastName(orderDto.getCustomerName().substring(names[0].length()).trim());
-                    }
-                }
-                newCustomer.setPhone(orderDto.getCustomerPhone());
-                newCustomer.setAddressDetails(orderDto.getShippingAddress());
-                return customerRepository.save(newCustomer);
-            });
+        Customer customer = customerRepository.findByUserId(userId).orElseGet(() -> {
+            Customer newCustomer = new Customer();
+            newCustomer.setUser(user);
+            newCustomer.setEmail(orderDto.getCustomerEmail());
+            String[] nameParts = orderDto.getCustomerName().split(" ", 2);
+            newCustomer.setFirstName(nameParts.length > 0 ? nameParts[0] : orderDto.getCustomerName());
+            if (nameParts.length > 1) newCustomer.setLastName(nameParts[1]); else newCustomer.setLastName("");
+            newCustomer.setPhone(orderDto.getCustomerPhone());
+            newCustomer.setAddressDetails(orderDto.getShippingAddress());
+            return customerRepository.save(newCustomer);
+        });
 
         Order order = new Order();
         order.setUser(user);
         order.setCustomer(customer);
-        // order.setOrderDate(LocalDateTime.now()); // Setat de @PrePersist
-        order.setStatus("PENDING_CONFIRMATION"); 
-        order.setShippingAddress(orderDto.getShippingAddress());
         order.setShippingCustomerName(orderDto.getCustomerName());
+        order.setShippingAddress(orderDto.getShippingAddress());
         order.setShippingCustomerEmail(orderDto.getCustomerEmail());
         order.setShippingCustomerPhone(orderDto.getCustomerPhone());
 
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        List<OrderItem> orderItemsEntities = new ArrayList<>();
+        List<OrderItem> orderItemsList = new ArrayList<>();
+        BigDecimal totalOrderAmount = BigDecimal.ZERO;
+
+        if (orderDto.getOrderItems() == null || orderDto.getOrderItems().isEmpty()) {
+            throw new BadRequestException("Order must contain at least one item.");
+        }
 
         for (OrderItemDto itemDto : orderDto.getOrderItems()) {
             Product product = productRepository.findById(itemDto.getProductId())
@@ -117,61 +116,66 @@ public class OrderService {
             }
 
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order); 
+            orderItem.setOrder(order);
             orderItem.setProductIdSnapshot(product.getId());
             orderItem.setProductNameSnapshot(product.getName());
-            orderItem.setProductImageBase64Snapshot(product.getImageBase64());
             orderItem.setQuantity(itemDto.getQuantity());
-            orderItem.setPriceAtPurchase(product.getPrice()); 
-            orderItem.setLineTotal(product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity())));
-            orderItemsEntities.add(orderItem);
+            
+            // Acum `product.getPrice()` este deja BigDecimal
+            BigDecimal itemPrice = product.getPrice(); 
+            orderItem.setPriceAtPurchase(itemPrice); // Setează direct BigDecimal
 
-            totalAmount = totalAmount.add(orderItem.getLineTotal());
+            BigDecimal quantity = new BigDecimal(itemDto.getQuantity());
+            BigDecimal lineTotal = itemPrice.multiply(quantity); 
+            
+            orderItem.setLineTotal(lineTotal); // Setează direct BigDecimal
+
+            orderItemsList.add(orderItem);
+            totalOrderAmount = totalOrderAmount.add(lineTotal);
 
             product.setStockQuantity(product.getStockQuantity() - itemDto.getQuantity());
-            // Nu e nevoie să salvezi produsul aici dacă ai CascadeType corespunzător pe Order->OrderItems
-            // și tranzacția se ocupă de asta. Dar dacă nu, salvează-l:
-            // productRepository.save(product);
+            productRepository.save(product);
         }
 
-        order.setOrderItems(orderItemsEntities);
-        order.setTotalAmount(totalAmount);
+        order.setOrderItems(orderItemsList);
+        order.setTotalAmount(totalOrderAmount); // Setează direct BigDecimal
 
         Order savedOrder = orderRepository.save(order);
-        return convertOrderToDto(savedOrder); // Aici se apelează metoda privată
+        return convertToDto(savedOrder);
     }
-    
-    @Transactional(readOnly = true)
-    public List<OrderDto> getOrderHistoryForUser(Long userId) {
-        return orderRepository.findByUserIdOrderByOrderDateDesc(userId).stream()
-                .map(this::convertOrderToDto) // Apel corect
+
+    public List<OrderDto> getOrdersByUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        return orderRepository.findByUserOrderByOrderDateDesc(user)
+                .stream()
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<OrderDto> getAllOrders(String statusFilter) {
+    public List<OrderDto> getAllOrders(String status) {
         List<Order> orders;
-        if (statusFilter != null && !statusFilter.trim().isEmpty()) {
-            orders = orderRepository.findByStatus(statusFilter);
+        if (status != null && !status.trim().isEmpty()) {
+            orders = orderRepository.findByStatusOrderByOrderDateDesc(status);
         } else {
-            orders = orderRepository.findAll();
+            orders = orderRepository.findAllByOrderByOrderDateDesc();
         }
-        return orders.stream().map(this::convertOrderToDto).collect(Collectors.toList()); // Apel corect
+        return orders.stream().map(this::convertToDto).collect(Collectors.toList());
     }
-
-    @Transactional(readOnly = true)
-    public OrderDto getOrderById(Long orderId) {
+     public OrderDto getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId)
-            .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
-        return convertOrderToDto(order); // Apel corect
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
+        return convertToDto(order);
     }
 
     @Transactional
-    public OrderDto updateOrderStatus(Long orderId, String newStatus) {
+    public OrderDto updateOrderStatus(Long orderId, OrderStatusUpdateDto statusUpdateDto) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
-        order.setStatus(newStatus);
+
+        // TODO: Adaugă validare pentru tranzițiile de status permise, dacă e necesar
+        order.setStatus(statusUpdateDto.getNewStatus().toUpperCase());
         Order updatedOrder = orderRepository.save(order);
-        return convertOrderToDto(updatedOrder); // Apel corect
+        return convertToDto(updatedOrder);
     }
 }

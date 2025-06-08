@@ -1,5 +1,168 @@
-/* src/app/features/products/product-detail/product-detail.component.scss */
-mat-card {
-  margin: 1rem auto;
-  max-width: 600px;
+// src/app/features/products/product-detail/product-detail.component.scss
+.product-detail-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+.back-button {
+  margin-bottom: 20px;
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.loading-indicator,
+.error-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #757575;
+  mat-spinner {
+    margin: 0 auto 15px auto;
+  }
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.product-card {
+  width: 100%;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 16px;
+
+  .header-text {
+    flex-grow: 1;
+  }
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+}
+
+.product-main-info {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
+  .image-container {
+    flex: 1 1 40%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    min-height: 200px; // Asigură o înălțime minimă
+
+    .product-image {
+      max-width: 100%;
+      max-height: 350px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+    .no-image-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #bdbdbd;
+      height: 200px;
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+      }
+      span {
+        margin-top: 8px;
+      }
+    }
+  }
+
+  .details-container {
+    flex: 1 1 60%;
+    display: flex;
+    flex-direction: column;
+
+    .price {
+      font-size: 2em;
+      font-weight: bold;
+      color: #3f51b5;
+      margin-bottom: 8px;
+    }
+    .stock {
+      font-size: 1em;
+      margin-bottom: 16px;
+      &.in-stock { color: #4CAF50; }
+      &.out-of-stock { color: #F44336; }
+    }
+    .description {
+      margin-bottom: 20px;
+      h4 {
+        margin-bottom: 8px;
+        font-size: 1.1em;
+        font-weight: 500;
+      }
+      p {
+        line-height: 1.6;
+        color: #424242;
+        white-space: pre-wrap; // Păstrează spațiile și rândurile noi din text
+      }
+    }
+    .add-to-cart-button {
+      margin-top: auto;
+      width: 100%;
+      max-width: 250px;
+      padding: 10px 0;
+      font-size: 1em;
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.specifications-section {
+  padding-top: 16px;
+  h3 {
+    margin-bottom: 12px;
+    font-size: 1.2em;
+    font-weight: 500;
+    color: rgba(0,0,0,0.77);
+  }
+  .specification-item {
+    border-bottom: 1px dotted #e0e0e0;
+    padding: 8px 0;
+    &:last-child {
+      border-bottom: none;
+    }
+    .spec-name {
+      font-weight: 500;
+      color: #333;
+      display: inline-block;
+      min-width: 150px; // Aliniere
+    }
+    .spec-value {
+      color: #555;
+    }
+  }
+  // Dacă specificațiile sunt într-o listă Material
+  mat-list-item {
+    .spec-name {
+       min-width: auto; // Resetează dacă e în listă
+    }
+  }
 }

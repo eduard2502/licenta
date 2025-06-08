@@ -1,0 +1,59 @@
+// src/app/features/admin/admin-users/admin-user-form/admin-user-form.component.scss
+.admin-user-form-container {
+  padding: 20px;
+  max-width: 700px; // Lățime adecvată pentru formular
+  margin: 20px auto;
+}
+
+mat-card-header {
+  padding-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+  p {
+    margin-top: 10px;
+    color: #757575;
+  }
+}
+
+// Stiluri pentru grupul de checkbox-uri (dacă se alege această variantă)
+.roles-checkbox-group {
+  margin-bottom: 16px;
+  .roles-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: rgba(0,0,0,.54); // Culoare similară cu mat-label
+  }
+  .role-checkbox {
+    margin-right: 16px;
+  }
+}
+
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  button {
+    min-width: 120px;
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+mat-error {
+  font-size: 0.85em;
+}

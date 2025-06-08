@@ -1,0 +1,41 @@
+// src/app/features/admin/admin-categories/admin-category-form/admin-category-form.component.scss
+.admin-category-form-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 20px auto; // Adăugat margine sus/jos
+}
+
+mat-card-header {
+  padding-bottom: 16px; // Spațiu sub titlu
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px; // Spațiu între câmpuri
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px; // Asigură spațiu pentru spinner
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px; // Spațiu între butoane
+  margin-top: 20px;
+
+  button {
+    min-width: 120px; // Lățime minimă pentru butoane
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Asigură-te că mesajele de eroare sunt vizibile
+mat-error {
+  font-size: 0.85em;
+}

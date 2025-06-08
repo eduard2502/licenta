@@ -1,0 +1,58 @@
+<!-- src/app/features/admin/admin-users/admin-user-form/admin-user-form.component.html -->
+<div class="admin-user-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ pageTitle }}</mat-card-title>
+      <!-- Corectat: userToEdit.username deoarece *ngIf="userToEdit" este prezent -->
+      <mat-card-subtitle *ngIf="userToEdit">Modifici datele pentru: {{ userToEdit.username }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="isLoading && userId" class="spinner-container">
+        <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
+        <p>Se încarcă datele utilizatorului...</p>
+      </div>
+
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading || !userId">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" readonly>
+          <mat-icon matSuffix>person_outline</mat-icon>
+          <mat-hint>Username-ul nu poate fi modificat.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Adresă Email</mat-label>
+          <input matInput type="email" formControlName="email" required>
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="userForm.get('email')?.hasError('required')">Email-ul este obligatoriu.</mat-error>
+          <mat-error *ngIf="userForm.get('email')?.hasError('email')">Format email invalid.</mat-error>
+          <mat-error *ngIf="userForm.get('email')?.hasError('maxlength')">Email-ul nu poate depăși 100 de caractere.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Roluri Utilizator</mat-label>
+          <mat-select formControlName="selectedRoles" multiple>
+            <mat-option *ngFor="let role of availableRoles" [value]="role">
+              {{ role.replace('ROLE_', '') }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="userForm.get('selectedRoles')?.hasError('required') && (userForm.get('selectedRoles')?.touched || userForm.get('selectedRoles')?.dirty)">
+            Cel puțin un rol trebuie selectat.
+          </mat-error>
+           <mat-hint *ngIf="userId === currentUserId">Atenție: Nu vă puteți elimina propriul rol de Administrator.</mat-hint>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-stroked-button color="warn" type="button" routerLink="/admin/users" [disabled]="isLoading">
+            <mat-icon>cancel</mat-icon> Anulează
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || userForm.invalid">
+            <mat-icon *ngIf="!isLoading">save</mat-icon>
+            <mat-progress-spinner *ngIf="isLoading" diameter="20" mode="indeterminate" style="margin-right: 8px; display: inline-block;"></mat-progress-spinner>
+            {{ isLoading ? 'Se actualizează...' : submitButtonText }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

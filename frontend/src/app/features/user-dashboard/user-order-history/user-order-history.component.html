@@ -1,0 +1,72 @@
+<!-- src/app/features/user-dashboard/user-order-history/user-order-history.component.html -->
+<div class="user-order-history-container">
+  <div class="header">
+    <h2>Comenzile Mele</h2>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Se încarcă istoricul comenzilor...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-message">
+    <p>{{ error }}</p>
+    <button mat-stroked-button color="warn" (click)="loadOrderHistory()">Reîncearcă</button>
+  </div>
+
+  <div *ngIf="!isLoading && !error && orders.length === 0" class="no-data">
+    <p>Nu ai plasat nicio comandă încă.</p>
+    <button mat-flat-button color="primary" routerLink="/products">Vezi Produse</button>
+  </div>
+
+  <mat-accordion multi="true" *ngIf="!isLoading && !error && orders.length > 0" class="order-accordion">
+    <mat-expansion-panel *ngFor="let order of orders; let i = index"
+                         (opened)="panelOpenState[i] = true"
+                         (closed)="panelOpenState[i] = false"
+                         class="order-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Comanda #{{ order.id }} - {{ order.orderDate | date:'dd/MM/yyyy' }}
+        </mat-panel-title>
+        <mat-panel-description fxLayoutAlign="space-between center">
+          <span>Total: {{ order.totalAmount | currency:'RON':'symbol':'1.2-2' }}</span>
+          <mat-chip-listbox aria-label="Status comandă">
+            <mat-chip selected [ngClass]="'status-chip-' + order.status.toLowerCase().replace('_', '-')">
+                {{ formatStatus(order.status) }}
+            </mat-chip>
+          </mat-chip-listbox>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="order-details-content">
+        <h4>Detalii Comandă:</h4>
+        <p><strong>Data plasării:</strong> {{ order.orderDate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+        <p><strong>Nume client (livrare):</strong> {{ order.customerName }}</p>
+        <p><strong>Adresă livrare:</strong> {{ order.shippingAddress }}</p>
+        <p><strong>Email contact:</strong> {{ order.customerEmail }}</p>
+        <p><strong>Telefon contact:</strong> {{ order.customerPhone }}</p>
+
+        <mat-divider></mat-divider>
+        <h4>Articole Comandate:</h4>
+        <mat-list role="list" class="order-items-list">
+          <mat-list-item *ngFor="let item of order.orderItems" role="listitem" class="order-item-detail">
+            <!-- Secțiunea Imagine Articol - COMENTATĂ TEMPORAR -->
+            <!--
+            <img matListItemAvatar *ngIf="item.productImageBase64Snapshot" [src]="item.productImageBase64Snapshot" [alt]="item.productNameSnapshot" class="item-image-small">
+            <mat-icon matListItemAvatar *ngIf="!item.productImageBase64Snapshot">inventory_2</mat-icon>
+            -->
+            <mat-icon matListItemAvatar>inventory_2</mat-icon> <!-- Placeholder generic -->
+
+            <span matListItemTitle>{{ item.productNameSnapshot }} (ID: {{ item.productId }})</span>
+            <span matListItemLine>
+              Cantitate: {{ item.quantity }} x {{ item.priceAtPurchase | currency:'RON':'symbol':'1.2-2' }}
+            </span>
+            <span matListItemMeta class="item-subtotal-small">
+              Subtotal: {{ calculateItemSubtotal(item) | currency:'RON':'symbol':'1.2-2' }}
+            </span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

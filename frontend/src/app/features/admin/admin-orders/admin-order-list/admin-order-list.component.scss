@@ -1,0 +1,82 @@
+// src/app/features/admin/admin-orders/admin-order-list/admin-order-list.component.scss
+.admin-order-list-container {
+  padding: 20px;
+  max-width: 1200px; // Lățime mai mare pentru tabele
+  margin: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.filter-field, .status-filter-field {
+  width: 100%;
+  max-width: 400px; // Limitează lățimea câmpului de filtrare
+  margin-right: 16px; // Spațiu între filtre dacă sunt pe aceeași linie
+  margin-bottom: 16px;
+}
+
+.status-filter-field {
+   min-width: 200px;
+}
+
+
+.loading-indicator,
+.error-message,
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #757575;
+  mat-spinner {
+    margin: 0 auto 10px auto;
+  }
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.table-container {
+  overflow-x: auto; // Permite scroll orizontal pe ecrane mici
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  width: 120px; // Spațiu pentru butoane de acțiune
+  text-align: right;
+}
+
+.mat-column-id {
+  width: 100px;
+}
+.mat-column-totalAmount {
+  width: 150px;
+  text-align: right;
+}
+.mat-column-status {
+  width: 200px;
+  font-weight: 500;
+}
+
+// Stiluri pentru statusuri (opțional, pentru vizibilitate)
+.status-pending_confirmation { color: #FFC107; } // Amber
+.status-approved { color: #4CAF50; } // Green
+.status-processing { color: #2196F3; } // Blue
+.status-shipped { color: #00BCD4; } // Cyan
+.status-delivered { color: #8BC34A; } // Light Green
+.status-canceled { color: #F44336; } // Red
+
+.mat-row:hover {
+  background-color: rgba(0,0,0,0.04);
+}

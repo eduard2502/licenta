@@ -1,0 +1,40 @@
+<div class="admin-spec-def-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ pageTitle }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="isLoading && isEditMode" class="spinner-container">
+        <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
+        <p>Se încarcă datele...</p>
+      </div>
+
+      <form [formGroup]="specDefForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading || !isEditMode">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nume Specificație</mat-label>
+          <input matInput formControlName="name" placeholder="Ex: Procesor, Memorie RAM, Culoare" required>
+          <mat-error *ngIf="f['name'].hasError('required')">Numele este obligatoriu.</mat-error>
+          <mat-error *ngIf="f['name'].hasError('minlength')">Minim 2 caractere.</mat-error>
+          <mat-error *ngIf="f['name'].hasError('maxlength')">Maxim 100 caractere.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Unitate de Măsură (Opțional)</mat-label>
+          <input matInput formControlName="unit" placeholder="Ex: GB, MHz, cm, kg">
+           <mat-error *ngIf="f['unit'].hasError('maxlength')">Maxim 50 caractere.</mat-error>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-stroked-button color="warn" type="button" routerLink="/admin/specification-definitions" [disabled]="isLoading">
+            <mat-icon>cancel</mat-icon> Anulează
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || specDefForm.invalid">
+            <mat-icon *ngIf="!isLoading">save</mat-icon>
+            <mat-progress-spinner *ngIf="isLoading" diameter="20" mode="indeterminate" style="margin-right: 8px; display: inline-block;"></mat-progress-spinner>
+            {{ isLoading ? 'Se salvează...' : submitButtonText }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

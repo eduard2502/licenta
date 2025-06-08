@@ -1,0 +1,45 @@
+<div class="admin-category-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ pageTitle }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="isLoading" class="spinner-container">
+        <mat-spinner diameter="50"></mat-spinner>
+      </div>
+
+      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nume Categorie</mat-label>
+          <input matInput formControlName="name" placeholder="Ex: Procesoare" required>
+          <mat-error *ngIf="f['name'].hasError('required')">
+            Numele este obligatoriu.
+          </mat-error>
+          <mat-error *ngIf="f['name'].hasError('minlength')">
+            Numele trebuie să aibă cel puțin 2 caractere.
+          </mat-error>
+          <mat-error *ngIf="f['name'].hasError('maxlength')">
+            Numele nu poate depăși 100 de caractere.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descriere</mat-label>
+          <textarea matInput formControlName="description" placeholder="O scurtă descriere a categoriei (opțional)" rows="3"></textarea>
+          <mat-error *ngIf="f['description'].hasError('maxlength')">
+            Descrierea nu poate depăși 1000 de caractere.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-stroked-button color="warn" type="button" routerLink="/admin/categories" [disabled]="isLoading">
+            <mat-icon>cancel</mat-icon> Anulează
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || categoryForm.invalid">
+            <mat-icon>save</mat-icon> {{ submitButtonText }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

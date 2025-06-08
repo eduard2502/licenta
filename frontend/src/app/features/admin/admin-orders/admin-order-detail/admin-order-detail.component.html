@@ -1,0 +1,94 @@
+<div class="admin-order-detail-container">
+  <button mat-stroked-button routerLink="/admin/orders" class="back-button">
+    <mat-icon>arrow_back</mat-icon> Înapoi la Listă Comenzi
+  </button>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Se încarcă detaliile comenzii...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-message">
+    <p>{{ error }}</p>
+    <button mat-stroked-button color="warn" (click)="loadOrderDetails()">Reîncearcă</button>
+  </div>
+
+  <div *ngIf="order && !isLoading" class="order-details">
+    <mat-card class="order-summary-card">
+      <mat-card-header>
+        <mat-card-title>Comanda #{{ order.id }}</mat-card-title>
+        <mat-card-subtitle>Plasată la: {{ order.orderDate | date:'dd/MM/yyyy HH:mm:ss' }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div><strong>Client:</strong> {{ order.customerName }}</div>
+          <div><strong>Email:</strong> {{ order.customerEmail }}</div>
+          <div><strong>Telefon:</strong> {{ order.customerPhone }}</div>
+          <div><strong>Utilizator (ID):</strong> {{ order.userId || 'N/A (Guest)' }}</div>
+          <div class="full-width"><strong>Adresă Livrare:</strong> {{ order.shippingAddress }}</div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="status-total">
+            <mat-chip-listbox aria-label="Status comandă">
+                <mat-chip selected [ngClass]="'status-chip-' + order.status.toLowerCase()">
+                    Status: {{ formatStatus(order.status) }}
+                </mat-chip>
+            </mat-chip-listbox>
+          <h3>Total Comandă: {{ order.totalAmount | currency:'RON':'symbol':'1.2-2' }}</h3>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="order-items-card">
+      <mat-card-header>
+        <mat-card-title>Articole Comandate</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list role="list" class="order-items-list">
+          <mat-list-item *ngFor="let item of order.orderItems" role="listitem" class="order-item-detail">
+            <!-- Secțiunea Imagine Articol - COMENTATĂ TEMPORAR -->
+            <!--
+            <img matListItemAvatar *ngIf="item.productImageBase64Snapshot" [src]="item.productImageBase64Snapshot" [alt]="item.productNameSnapshot || 'Imagine produs'" class="item-image-small">
+            <mat-icon matListItemAvatar *ngIf="!item.productImageBase64Snapshot">inventory_2</mat-icon>
+            -->
+            <mat-icon matListItemAvatar>inventory_2</mat-icon> <!-- Placeholder generic -->
+
+            <span matListItemTitle>{{ item.productNameSnapshot }} (ID: {{ item.productId }})</span>
+            <span matListItemLine>
+              Cantitate: {{ item.quantity }} x {{ item.priceAtPurchase | currency:'RON':'symbol':'1.2-2' }}
+            </span>
+            <span matListItemMeta class="item-subtotal-small">
+              Subtotal: {{ calculateItemSubtotal(item) | currency:'RON':'symbol':'1.2-2' }}
+            </span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="status-update-card">
+      <mat-card-header>
+        <mat-card-title>Actualizează Status Comandă</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="statusUpdateForm" (ngSubmit)="onUpdateStatus()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Status Nou</mat-label>
+            <mat-select formControlName="newStatus" required>
+              <mat-option *ngFor="let status of availableStatuses" [value]="status">
+                {{ formatStatus(status) }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="statusUpdateForm.get('newStatus')?.hasError('required')">
+              Selectați un status.
+            </mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" [disabled]="statusUpdateForm.invalid || isUpdatingStatus">
+            <mat-icon *ngIf="!isUpdatingStatus">update</mat-icon>
+            <mat-progress-spinner *ngIf="isUpdatingStatus" diameter="20" mode="indeterminate" style="margin-right: 8px;"></mat-progress-spinner>
+            {{ isUpdatingStatus ? 'Se actualizează...' : 'Actualizează Status' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

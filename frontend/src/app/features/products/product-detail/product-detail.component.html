@@ -1,16 +1,75 @@
 <!-- src/app/features/products/product-detail/product-detail.component.html -->
-<mat-card *ngIf="product as p">
-  <mat-card-header>
-    <mat-card-title>{{ p.nume }}</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <p>Procesor: {{ p.procesor }}</p>
-    <p>Memorie: {{ p.memorie }} GB</p>
-    <p>Stoc: {{ p.stoc }} buc.</p>
-    <p>Pret: {{ p.pret | currency:'RON' }}</p>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-button color="accent" [routerLink]="['/produse', p.id, 'editeaza']">Editează</button>
-    <button mat-button routerLink="/produse">Înapoi la listă</button>
-  </mat-card-actions>
-</mat-card>
+<div class="product-detail-container">
+  <button mat-stroked-button routerLink="/admin/products" *ngIf="isAdminView && authService.role === 'admin'" class="back-button">
+    <mat-icon>arrow_back</mat-icon> Înapoi la Listă Produse (Admin)
+  </button>
+  <button mat-stroked-button routerLink="/products" *ngIf="!isAdminView" class="back-button">
+    <mat-icon>arrow_back</mat-icon> Înapoi la Produse
+  </button>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p>Se încarcă detaliile produsului...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-message">
+    <p>{{ error }}</p>
+    <button mat-stroked-button color="warn" (click)="loadProductDetails()">Reîncearcă</button>
+  </div>
+
+  <div *ngIf="product && !isLoading" class="product-content">
+    <mat-card class="product-card">
+      <mat-card-header class="product-header">
+        <div class="header-text">
+          <mat-card-title>{{ product.name | titlecase }}</mat-card-title>
+          <mat-card-subtitle *ngIf="product.categoryName">Categorie: {{ product.categoryName }}</mat-card-subtitle>
+        </div>
+        <div class="header-actions" *ngIf="isAdminView && authService.role === 'admin'">
+          <button mat-flat-button color="primary" [routerLink]="['/admin/products/edit', product.id]">
+            <mat-icon>edit</mat-icon> Editează
+          </button>
+          <button mat-flat-button color="warn" (click)="deleteProduct()">
+            <mat-icon>delete</mat-icon> Șterge
+          </button>
+        </div>
+      </mat-card-header>
+
+      <div class="product-main-info">
+        <!-- Secțiunea Imagine - COMENTATĂ TEMPORAR -->
+        <!--
+        <div class="image-container">
+          <img *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name" class="product-image">
+          <div *ngIf="!product.imageBase64" class="no-image-placeholder">
+            <mat-icon>photo_camera</mat-icon>
+            <span>Imagine indisponibilă</span>
+          </div>
+        </div>
+        -->
+        <div class="details-container">
+          <p class="price">{{ product.price | currency:'RON':'symbol':'1.2-2' }}</p>
+          <p class="stock" [ngClass]="{'in-stock': product.stockQuantity > 0, 'out-of-stock': product.stockQuantity === 0}">
+            Stoc: {{ product.stockQuantity > 0 ? product.stockQuantity + ' buc.' : 'Indisponibil' }}
+          </p>
+          <div class="description" *ngIf="product.description">
+            <h4>Descriere:</h4>
+            <p [innerHTML]="product.description | nl2br"></p>
+          </div>
+          <button *ngIf="!isAdminView" mat-raised-button color="accent" class="add-to-cart-button" [disabled]="product.stockQuantity === 0">
+            <mat-icon>add_shopping_cart</mat-icon> Adaugă în Coș
+          </button>
+        </div>
+      </div>
+      
+      <mat-card-content *ngIf="product.specifications && product.specifications.length > 0" class="specifications-section">
+        <mat-divider></mat-divider>
+        <h3>Specificații Tehnice</h3>
+        <mat-list role="list">
+          <mat-list-item *ngFor="let spec of product.specifications" role="listitem" class="specification-item">
+            <span matListItemTitle class="spec-name">{{ spec.name || 'Specificație' }}:</span>
+            <span matListItemLine class="spec-value">{{ spec.value }} {{ spec.unit || '' }}</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
