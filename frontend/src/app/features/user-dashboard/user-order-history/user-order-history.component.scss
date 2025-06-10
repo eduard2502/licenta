@@ -10,7 +10,7 @@
   h2 {
     margin: 0;
     font-size: 1.8em;
-    color: #3f51b5; // Culoarea primară
+    color: #448AFF; // Culoarea primară
   }
 }
 
@@ -65,12 +65,12 @@
   }
 }
 
-.status-chip-pending_confirmation { background-color: #FFECB3 !important; color: #795548 !important; }
-.status-chip-approved { background-color: #C8E6C9 !important; color: #2E7D32 !important; }
-.status-chip-processing { background-color: #BBDEFB !important; color: #1565C0 !important; }
-.status-chip-shipped { background-color: #B2EBF2 !important; color: #006064 !important; }
-.status-chip-delivered { background-color: #DCEDC8 !important; color: #558B2F !important; }
-.status-chip-canceled { background-color: #FFCDD2 !important; color: #C62828 !important; }
+.status-chip-pending_confirmation { background-color: #424242 !important; color: #fff !important; }
+.status-chip-approved { background-color: #1565C0 !important; color: #fff !important; } // Albastru închis
+.status-chip-processing { background-color: #448AFF !important; color: #fff !important; } // Albastru accent
+.status-chip-shipped { background-color: #03A9F4 !important; color: #fff !important; } // Albastru deschis
+.status-chip-delivered { background-color: #009688 !important; color: #fff !important; } // Teal, merge bine cu albastru
+.status-chip-canceled { background-color: #f44336 !important; color: #fff !important; } // Roșu rămâne la fel
 
 
 .order-details-content {
@@ -81,7 +81,7 @@
     margin-bottom: 8px;
     font-size: 1.1em;
     font-weight: 500;
-    color: #3f51b5;
+    color: #448AFF; 
   }
   &:first-of-type h4 { // Primul h4 din conținut
       margin-top: 0;

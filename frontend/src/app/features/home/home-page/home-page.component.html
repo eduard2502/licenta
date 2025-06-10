@@ -1,0 +1,48 @@
+<div class="home-container">
+
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="text-content">
+        <h1>Dive into immersive gaming</h1>
+        <p>Feel every explosion, every step, and every sound detail with the new VipeX gaming headsets.</p>
+        <button mat-flat-button color="primary">Vezi oferta</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="selection-section">
+    <h2 class="section-title">Our selection</h2>
+
+    <div *ngIf="isLoading" class="loading-indicator">
+      <mat-spinner diameter="60"></mat-spinner>
+    </div>
+
+    <div class="product-grid" *ngIf="!isLoading && products.length > 0">
+      <mat-card *ngFor="let product of products" class="product-card" [routerLink]="['/products', product.id]">
+        <div class="product-image-container">
+           <mat-icon>inventory_2</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>{{ product.name }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="product-price">{{ product.price | currency:'RON' }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-stroked-button color="primary">Add to cart</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </main>
+
+  <section class="social-section">
+    <h2 class="section-title">Be connected. Be VipeX.</h2>
+    <div class="social-icons">
+      <a href="#" class="social-icon-box">X</a>
+      <a href="#" class="social-icon-box">O</a>
+      <a href="#" class="social-icon-box">f</a>
+    </div>
+  </section>
+
+</div>

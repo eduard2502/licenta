@@ -1,4 +1,3 @@
-<!-- src/app/app.component.html -->
 <mat-toolbar color="primary" class="app-toolbar" *ngIf="!hideToolbar">
   <button mat-icon-button routerLink="/" aria-label="Pagina principală">
     <mat-icon>storefront</mat-icon>
@@ -7,35 +6,18 @@
 
   <span class="toolbar-spacer"></span>
 
-  <button mat-button routerLink="/products">
+  <button mat-button routerLink="/products-list">
     <mat-icon>list_alt</mat-icon> Produse
   </button>
 
-  <!-- În app.component.html, comentează sau simplifică butonul de coș: -->
-<!--
-<button mat-icon-button routerLink="/cart" aria-label="Coș de cumpărături">
-  <mat-icon matBadge="{{ cartItemCount > 0 ? cartItemCount : '' }}"
-            [matBadgeHidden]="cartItemCount === 0"
-            matBadgeColor="warn"
-            aria-hidden="false">
-    shopping_cart
-  </mat-icon>
-</button>
--->
-<button mat-icon-button routerLink="/cart" aria-label="Coș de cumpărături">
-  <mat-icon>shopping_cart</mat-icon> <!-- Versiune simplificată fără badge -->
-</button>
+  <button mat-icon-button routerLink="/cart" aria-label="Coș de cumpărături">
+    <mat-icon>shopping_cart</mat-icon>
+  </button>
 
   <ng-container *ngIf="!isLoggedIn">
     <button mat-stroked-button routerLink="/login" class="auth-button">
       <mat-icon>login</mat-icon> Autentificare
     </button>
-    <!-- TODO: Adaugă link către pagina de Signup când e creată -->
-    <!--
-    <button mat-button routerLink="/signup" class="auth-button">
-      <mat-icon>person_add</mat-icon> Înregistrare
-    </button>
-    -->
   </ng-container>
 
   <ng-container *ngIf="isLoggedIn">
@@ -45,10 +27,10 @@
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
     <mat-menu #userMenu="matMenu">
-      <button mat-menu-item routerLink="/user/profile" *ngIf="userRole === 'user'">
+      <button mat-menu-item routerLink="/my-profile" *ngIf="userRole === 'user'">
         <mat-icon>manage_accounts</mat-icon> Profilul Meu
       </button>
-      <button mat-menu-item routerLink="/user/orders" *ngIf="userRole === 'user'">
+      <button mat-menu-item routerLink="/my-orders" *ngIf="userRole === 'user'">
         <mat-icon>history</mat-icon> Comenzile Mele
       </button>
       <button mat-menu-item routerLink="/admin" *ngIf="userRole === 'admin'">
@@ -62,6 +44,6 @@
   </ng-container>
 </mat-toolbar>
 
-<div class="main-content" [class.no-toolbar]="hideToolbar">
+<div class="main-content">
   <router-outlet></router-outlet>
 </div>

@@ -1,0 +1,40 @@
+// src/themes/dark-blue-theme.scss
+
+@use '@angular/material' as mat;
+
+// Includem o singură dată nucleul Angular Material.
+@include mat.core();
+
+// 1. Definește paletele de culori
+$dark-primary-palette: mat.define-palette(mat.$grey-palette, 900, 800, 950);
+$dark-accent-palette: mat.define-palette(mat.$blue-palette, A200, A100, A400);
+$dark-warn-palette: mat.define-palette(mat.$red-palette);
+
+// 2. Creează obiectul temei
+$dark-blue-theme: mat.define-dark-theme((
+  color: (
+    primary: $dark-primary-palette,
+    accent: $dark-accent-palette,
+    warn: $dark-warn-palette,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+// 3. Aplică tema pentru toate componentele Angular Material
+@include mat.all-component-themes($dark-blue-theme);
+
+
+// ===================================================================
+// == SUPRASCRIERE CUSTOM PENTRU COMPONENTE SPECIFICE (CEA MAI IMPORTANTĂ PARTE) ==
+// ===================================================================
+
+// Aici adăugăm regula pentru a face bara de navigare "seamless".
+// Deoarece se află în același fișier cu tema, va fi aplicată corect.
+.app-toolbar {
+  background: rgba(18, 18, 18, 0.65) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}

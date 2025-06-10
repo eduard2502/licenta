@@ -1,148 +1,186 @@
-// src/app/features/user-dashboard/user-dashboard.component.scss
+/* src/app/features/user-dashboard/user-dashboard.component.scss */
+
+// Stiluri pentru containerul principal și meniul lateral
 .user-dashboard-container {
-  height: calc(100vh - 64px); // Ajustează dacă ai un toolbar global de altă înălțime
+  height: calc(100vh - 64px); 
   display: flex;
 }
 
 .user-sidenav {
   width: 240px;
-  background-color: #fafafa; // Un fundal deschis
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: #1e1e1e; // Fundal mai închis pentru meniu
+  border-right: 1px solid #444;
 
   .sidenav-header {
     padding: 16px;
-    text-align: left; // Aliniere la stânga pentru header
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid #444;
     display: flex;
     align-items: center;
-    gap: 10px; // Spațiu între iconiță și text
+    gap: 10px;
 
     mat-icon {
-      font-size: 28px; // Mărime mai mare pentru iconița de user
-      width: 28px;
-      height: 28px;
-      color: #3f51b5; // Culoarea primară
+      color: #4CAF50; // Accent verde
     }
-
     h3 {
       margin: 0;
-      font-size: 1.1em;
       font-weight: 500;
     }
-  }
-
-  mat-nav-list {
-    padding-top: 8px;
   }
 
   a[mat-list-item] {
-    color: rgba(0, 0, 0, 0.77);
+    color: #ccc;
     border-left: 4px solid transparent;
     transition: background-color 0.3s, border-left-color 0.3s;
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-
+    &:hover { background-color: #2a2a2a; }
     &.active-link {
-      background-color: rgba(63, 81, 181, 0.08);
-      color: #3f51b5;
-      border-left-color: #3f51b5;
+      background-color: rgba(76, 175, 80, 0.1);
+      color: #4CAF50;
+      border-left-color: #4CAF50;
       font-weight: 500;
+      mat-icon { color: #4CAF50; }
+    }
+  }
+}
 
-      mat-icon[matListItemIcon] {
-        color: #3f51b5;
+// Resetează padding-ul default
+:host ::ng-deep .mat-drawer-content {
+  padding: 0;
+  overflow: auto;
+}
+
+// Stiluri pentru conținutul principal nou
+.user-content {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.section-title {
+  color: #4CAF50;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* === Secțiunea Hero === */
+.hero-section {
+  min-height: 60vh;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to right, #121212 30%, rgba(18, 18, 18, 0.7) 60%, rgba(18, 18, 18, 0) 100%);
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    
+    .text-content {
+      max-width: 50%;
+      h1 { font-size: 3rem; font-weight: bold; color: white; }
+      p { font-size: 1.1rem; line-height: 1.6; margin: 20px 0 30px; }
+      button {
+        padding: 10px 30px;
+        font-size: 1rem;
+        background-color: #4CAF50;
+        color: #121212;
+        font-weight: bold;
       }
     }
-
-    mat-icon[matListItemIcon] {
-      margin-right: 16px;
-      color: rgba(0,0,0,0.54);
-    }
-  }
-  mat-divider {
-    margin: 8px 0;
   }
 }
 
-.user-content {
-  flex-grow: 1;
-  padding: 24px;
-  overflow-y: auto;
+/* === Secțiunea de Produse === */
+.selection-section {
+  padding: 60px 40px;
 }
 
-.dashboard-welcome {
-  text-align: center;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+}
 
-  h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #333;
+.product-card {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #4CAF50;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.25);
   }
-  p {
+
+  .product-image-container {
+    height: 200px;
+    background-color: #121212;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #555;
-    font-size: 1.05em;
-    line-height: 1.6;
+    mat-icon { font-size: 60px; width: 60px; height: 60px; }
+  }
+
+  mat-card-header {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  mat-card-title {
+    color: #4CAF50;
+    font-size: 1.1rem;
+  }
+  
+  mat-card-content {
+    text-align: center;
+    .product-price { font-size: 1.1rem; font-weight: bold; margin-top: 5px; }
+  }
+
+  mat-card-actions {
+    justify-content: center;
+    padding: 0 16px 16px;
+    button { border: 1px solid #4CAF50; color: #4CAF50; }
   }
 }
 
-.recommended-products {
-  margin-top: 30px;
-  text-align: left; // Aliniere la stânga pentru titlul secțiunii
-
-  h3 {
-    font-size: 1.4em;
-    margin-bottom: 20px;
-    color: #3f51b5;
-    border-bottom: 2px solid #3f51b5;
-    padding-bottom: 8px;
-    display: inline-block;
-  }
-
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+/* === Secțiunea Social Media === */
+.social-section {
+  padding: 60px 40px;
+  background-color: #1a1a1a;
+  .social-icons {
+    display: flex;
+    justify-content: center;
     gap: 20px;
-  }
-
-  .product-card-item {
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    img[mat-card-image] {
-      height: 180px; // Înălțime fixă pentru imagine
-      object-fit: cover; // Asigură că imaginea acoperă spațiul
-    }
-
-    mat-card-title {
-      font-size: 1.1em;
-      margin-bottom: 4px;
-      // Limitează numărul de rânduri pentru titlu
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-height: 2.4em; // Aproximativ 2 rânduri de text
-    }
-    mat-card-subtitle {
-      font-size: 1em;
-      color: #00796b; // O culoare distinctă pentru preț
-      font-weight: 500;
-    }
-    mat-card-actions {
-      padding: 8px 16px !important; // Suprascrie padding-ul default dacă e nevoie
+    .social-icon-box {
+      width: 120px;
+      height: 120px;
+      background-color: #121212;
+      border: 2px solid #4CAF50;
       display: flex;
-      justify-content: flex-end; // Aliniază butonul la dreapta
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      font-weight: bold;
+      color: #4CAF50;
+      text-decoration: none;
+      transition: background-color 0.2s;
+      &:hover { background-color: #2a2a2a; }
     }
   }
 }

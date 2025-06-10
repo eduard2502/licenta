@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card'; // Pentru produsele recomandate
 import { MatDividerModule } from '@angular/material/divider';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../auth/auth.service';
 import { Product } from '../../shared/models/product.model'; // Modelul de produs
 import { ProductService } from '../products/product.service'; // Serviciul de produse
@@ -26,7 +26,8 @@ import { ProductService } from '../products/product.service'; // Serviciul de pr
     MatButtonModule,
     MatCardModule,
     MatDividerModule,
-    CurrencyPipe
+    CurrencyPipe,
+    MatProgressSpinnerModule
   ],
   templateUrl: './user-dashboard.component.html',
   styleUrls: ['./user-dashboard.component.scss']

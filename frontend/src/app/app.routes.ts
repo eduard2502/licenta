@@ -1,10 +1,17 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
+// Componenta noua pentru pagina principala
+import { HomePageComponent } from './features/home/home-page/home-page.component';
+
+// Componente pentru autentificare si dashboard-uri
 import { LoginComponent } from './login/login.component';
-import { UserDashboardComponent } from './features/user-dashboard/user-dashboard.component';
 import { AdminDashboardComponent } from './features/admin-dashboard/admin-dashboard.component';
 
+// Componente publice
+import { ProductListComponent } from './features/products/product-list/product-list.component';
+import { ProductDetailComponent } from './features/products/product-detail/product-detail.component';
+
+// Componente pentru sectiuni specifice (Admin & User)
 import { AdminCategoryListComponent } from './features/admin/admin-categories/admin-category-list/admin-category-list.component';
 import { AdminCategoryFormComponent } from './features/admin/admin-categories/admin-category-form/admin-category-form.component';
 import { AdminOrderListComponent } from './features/admin/admin-orders/admin-order-list/admin-order-list.component';
@@ -13,79 +20,61 @@ import { AdminSpecDefListComponent } from './features/admin/admin-specifications
 import { AdminSpecDefFormComponent } from './features/admin/admin-specifications/admin-spec-def-form/admin-spec-def-form.component';
 import { AdminUserListComponent } from './features/admin/admin-users/admin-user-list/admin-user-list.component';
 import { AdminUserFormComponent } from './features/admin/admin-users/admin-user-form/admin-user-form.component';
-
-import { ProductListComponent }    from './features/products/product-list/product-list.component';
-import { ProductFormComponent }    from './features/products/product-form/product-form.component';
-import { ProductDetailComponent }  from './features/products/product-detail/product-detail.component';
-
+import { ProductFormComponent } from './features/products/product-form/product-form.component';
 import { UserOrderHistoryComponent } from './features/user-dashboard/user-order-history/user-order-history.component';
 
-// Importă guard-urile funcționale corect
-import { authGuard }   from './auth/auth.guard';      // <<< CORECTAT
-import { userGuard }   from './auth/user.guard';      // <<< CORECTAT
-import { adminGuard }  from './auth/admin.guard';     // <<< CORECTAT
+// Guards pentru securizarea rutelor
+import { userGuard } from './auth/user.guard';
+import { adminGuard } from './auth/admin.guard';
 
 export const routes: Routes = [
+  // Pagina principala (default), publica
+  { path: '', component: HomePageComponent, title: 'VipeX Technology' },
+
+  // Ruta de autentificare
   { path: 'login', component: LoginComponent, title: 'Autentificare' },
-  {
-    path: 'user',
-    component: UserDashboardComponent,
-    canActivate: [authGuard, userGuard], // <<< CORECTAT
-    title: 'Contul Meu',
-    children: [
-      { path: '', redirectTo: 'dashboard-overview', pathMatch: 'full' },
-      { path: 'dashboard-overview', component: UserDashboardComponent, title: 'Sumar Cont'},
-      { path: 'orders', component: UserOrderHistoryComponent, title: 'Istoric Comenzi' },
-    ]
-  },
+  
+  // Rutele de detalii produs și catalog rămân publice
+  { path: 'products-list', component: ProductListComponent, title: 'Catalog Produse' }, // Ruta pentru tabelul vechi
+  { path: 'products/:id', component: ProductDetailComponent, title: 'Detalii Produs' },
+
+  // Rute protejate pentru Utilizator (fără un dashboard-wrapper)
+  { path: 'my-orders', component: UserOrderHistoryComponent, canActivate: [userGuard], title: 'Comenzile Mele' },
+  // { path: 'my-profile', component: UserProfileComponent, canActivate: [userGuard], title: 'Profilul Meu' },
+
+  // Rute protejate pentru Administrator
   {
     path: 'admin',
     component: AdminDashboardComponent,
-    canActivate: [authGuard, adminGuard], // <<< CORECTAT
+    canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'products', pathMatch: 'full' },
-      {
-        path: 'products',
-        children: [
+      { path: 'products', children: [
           { path: '', component: ProductListComponent, title: 'Administrare Produse' },
           { path: 'new', component: ProductFormComponent, title: 'Adaugă Produs' },
           { path: 'edit/:id', component: ProductFormComponent, title: 'Editează Produs' },
-        ]
-      },
-      {
-        path: 'categories',
-        children: [
+      ]},
+      { path: 'categories', children: [
           { path: '', component: AdminCategoryListComponent, title: 'Administrare Categorii' },
           { path: 'new', component: AdminCategoryFormComponent, title: 'Adaugă Categorie' },
           { path: 'edit/:id', component: AdminCategoryFormComponent, title: 'Editează Categorie' },
-        ]
-      },
-      {
-        path: 'orders',
-        children: [
+      ]},
+      { path: 'orders', children: [
           { path: '', component: AdminOrderListComponent, title: 'Administrare Comenzi' },
-          { path: ':id', component: AdminOrderDetailComponent, title: 'Detalii Comandă Admin' },
-        ]
-      },
-      {
-        path: 'specification-definitions',
-        children: [
-          { path: '', component: AdminSpecDefListComponent, title: 'Administrare Def. Specificații' },
-          { path: 'new', component: AdminSpecDefFormComponent, title: 'Adaugă Def. Specificație' },
-          { path: 'edit/:id', component: AdminSpecDefFormComponent, title: 'Editează Def. Specificație' },
-        ]
-      },
-      {
-        path: 'users',
-        children: [
+          { path: ':id', component: AdminOrderDetailComponent, title: 'Detalii Comandă' },
+      ]},
+      { path: 'specification-definitions', children: [
+          { path: '', component: AdminSpecDefListComponent, title: 'Definiții Specificații' },
+          { path: 'new', component: AdminSpecDefFormComponent, title: 'Adaugă Definiție' },
+          { path: 'edit/:id', component: AdminSpecDefFormComponent, title: 'Editează Definiție' },
+      ]},
+      { path: 'users', children: [
           { path: '', component: AdminUserListComponent, title: 'Administrare Utilizatori' },
           { path: 'edit/:id', component: AdminUserFormComponent, title: 'Editează Utilizator' },
-        ]
-      },
+      ]}
     ]
   },
-  { path: 'products', component: ProductListComponent, title: 'Catalog Produse' }, // Consideră o componentă PublicProductListComponent
-  { path: 'products/:id', component: ProductDetailComponent, title: 'Detalii Produs' },
-  { path: '', redirectTo: '/products', pathMatch: 'full' },
-  { path: '**', redirectTo: '/products' }
+
+  // Orice altceva redirecționează la pagina principală
+  { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

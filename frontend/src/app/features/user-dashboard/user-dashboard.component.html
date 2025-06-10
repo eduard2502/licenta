@@ -13,7 +13,8 @@
         <mat-icon matListItemIcon>history</mat-icon>
         <span matListItemTitle>Comenzile Mele</span>
       </a>
-      <a mat-list-item routerLink="/products" routerLinkActive="active-link"> <mat-icon matListItemIcon>storefront</mat-icon>
+      <a mat-list-item routerLink="/products" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>storefront</mat-icon>
         <span matListItemTitle>Vezi Produse</span>
       </a>
       <mat-divider></mat-divider>
@@ -25,32 +26,59 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="user-content">
-    <router-outlet></router-outlet>
-    <div *ngIf="router.url === '/user' || router.url === '/user/'" class="dashboard-welcome">
-      <h2>Bine ai venit în contul tău!</h2>
-      <p>De aici poți naviga către profilul tău, istoricul comenzilor sau poți explora produsele noastre.</p>
-      
-      <!-- Secțiune Produse Recomandate - COMENTATĂ TEMPORAR sau simplificată -->
-      <!--
-      <div *ngIf="recommendedProducts.length > 0" class="recommended-products">
-        <h3>Produse Recomandate</h3>
-        <div class="products-grid">
-          <mat-card *ngFor="let product of recommendedProducts" class="product-card-item" [routerLink]="['/products', product.id]">
-            -- Comentat img
-            -- <img mat-card-image *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name">
-            -- <img mat-card-image *ngIf="!product.imageBase64" src="[https://via.placeholder.com/200x150?text=Produs](https://via.placeholder.com/200x150?text=Produs)" alt="Imagine indisponibilă">
-            <div style="height: 150px; background-color: #eee; display:flex; align-items:center; justify-content:center; border-top-left-radius: 4px; border-top-right-radius: 4px;">
-                <mat-icon style="font-size: 48px; color: #aaa;">inventory_2</mat-icon>
+
+    <div *ngIf="router.url === '/user' || router.url === '/user/'">
+
+      <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="text-content">
+            <h1>Dive into immersive gaming</h1>
+            <p>Feel every explosion, every step, and every sound detail with the new VipeX gaming headsets.</p>
+            <button mat-flat-button color="primary">Buy now</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="selection-section">
+        <h2 class="section-title">Our selection</h2>
+
+        <div *ngIf="isLoadingRecommendations" class="loading-indicator">
+          <mat-spinner diameter="60"></mat-spinner>
+        </div>
+
+        <div class="product-grid" *ngIf="!isLoadingRecommendations && recommendedProducts.length > 0">
+          <mat-card *ngFor="let product of recommendedProducts" class="product-card" [routerLink]="['/products', product.id]">
+            
+            <div class="product-image-container">
+               <mat-icon>inventory_2</mat-icon>
             </div>
-            <mat-card-title>{{ product.name }}</mat-card-title>
-            <mat-card-subtitle>{{ product.price | currency:'RON':'symbol':'1.2-2' }}</mat-card-subtitle>
+      
+            <mat-card-header>
+              <mat-card-title>{{ product.name }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="product-price">{{ product.price | currency:'RON':'symbol':'1.2-2' }}</p>
+            </mat-card-content>
             <mat-card-actions>
-              <button mat-button color="primary">Vezi Detalii</button>
+              <button mat-stroked-button color="primary" (click)="$event.stopPropagation()">Add to cart</button>
             </mat-card-actions>
           </mat-card>
         </div>
-      </div>
-      -->
+      </section>
+
+      <section class="social-section">
+        <h2 class="section-title">Be connected. Be VipeX.</h2>
+        <div class="social-icons">
+          <a href="#" class="social-icon-box">X</a>
+          <a href="#" class="social-icon-box">O</a>
+          <a href="#" class="social-icon-box">f</a>
+          <a href="#" class="social-icon-box">B</a>
+        </div>
+      </section>
     </div>
+
+    <router-outlet></router-outlet>
+    
   </mat-sidenav-content>
 </mat-sidenav-container>

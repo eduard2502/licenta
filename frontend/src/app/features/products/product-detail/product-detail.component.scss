@@ -97,16 +97,16 @@
     display: flex;
     flex-direction: column;
 
-    .price {
+     .price {
       font-size: 2em;
       font-weight: bold;
-      color: #3f51b5;
+      color: #448AFF; // MODIFICAT: Albastru accent
       margin-bottom: 8px;
     }
     .stock {
       font-size: 1em;
       margin-bottom: 16px;
-      &.in-stock { color: #4CAF50; }
+      &.in-stock { color: #448AFF; } // MODIFICAT: Albastru în loc de verde
       &.out-of-stock { color: #F44336; }
     }
     .description {
