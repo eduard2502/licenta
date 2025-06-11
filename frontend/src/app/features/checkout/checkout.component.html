@@ -1,0 +1,227 @@
+<!-- frontend/src/app/features/checkout/checkout.component.html -->
+<div class="checkout-container">
+  <h1 class="page-title">Finalizare comandă</h1>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Se încarcă...</p>
+  </div>
+
+  <div *ngIf="!isLoading && cart" class="checkout-content">
+    <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+      <div class="checkout-grid">
+        <!-- Left column - Form sections -->
+        <div class="checkout-form">
+          <!-- Contact Information -->
+          <mat-card formGroupName="contactInfo">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>person</mat-icon>
+                Informații contact
+              </mat-card-title>
+              <mat-card-subtitle>Vă vom trimite confirmarea comenzii pe email</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nume complet</mat-label>
+                <input matInput formControlName="fullName" placeholder="Ion Popescu">
+                <mat-error>{{ getErrorMessage('contactInfo.fullName') }}</mat-error>
+              </mat-form-field>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Email</mat-label>
+                  <input matInput type="email" formControlName="email" placeholder="email@example.com">
+                  <mat-error>{{ getErrorMessage('contactInfo.email') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Telefon</mat-label>
+                  <input matInput formControlName="phone" placeholder="0712345678">
+                  <mat-error>{{ getErrorMessage('contactInfo.phone') }}</mat-error>
+                </mat-form-field>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Billing Address -->
+          <mat-card formGroupName="billingAddress">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>home</mat-icon>
+                Adresă de facturare
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Adresă</mat-label>
+                <textarea matInput formControlName="address" rows="2" 
+                          placeholder="Str. Exemplu, Nr. 123, Bl. A, Sc. 1, Ap. 10"></textarea>
+                <mat-error>{{ getErrorMessage('billingAddress.address') }}</mat-error>
+              </mat-form-field>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Oraș</mat-label>
+                  <input matInput formControlName="city" placeholder="București">
+                  <mat-error>{{ getErrorMessage('billingAddress.city') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Cod poștal</mat-label>
+                  <input matInput formControlName="postalCode" placeholder="123456">
+                  <mat-error>{{ getErrorMessage('billingAddress.postalCode') }}</mat-error>
+                </mat-form-field>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Shipping Address -->
+          <mat-card formGroupName="shippingAddress">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>local_shipping</mat-icon>
+                Adresă de livrare
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-checkbox formControlName="sameAsBilling">
+                Aceeași cu adresa de facturare
+              </mat-checkbox>
+
+              <div *ngIf="differentShippingAddress" class="shipping-fields">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Adresă livrare</mat-label>
+                  <textarea matInput formControlName="address" rows="2"></textarea>
+                  <mat-error>{{ getErrorMessage('shippingAddress.address') }}</mat-error>
+                </mat-form-field>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Oraș</mat-label>
+                    <input matInput formControlName="city">
+                    <mat-error>{{ getErrorMessage('shippingAddress.city') }}</mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Cod poștal</mat-label>
+                    <input matInput formControlName="postalCode">
+                    <mat-error>{{ getErrorMessage('shippingAddress.postalCode') }}</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Payment Method -->
+          <mat-card formGroupName="payment">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>payment</mat-icon>
+                Metodă de plată
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-radio-group formControlName="paymentMethod" class="payment-options">
+                <mat-radio-button value="CASH_ON_DELIVERY">
+                  <mat-icon>local_shipping</mat-icon>
+                  Plata la livrare (Cash on Delivery)
+                  <span class="payment-note">Plătești cash când primești comanda</span>
+                </mat-radio-button>
+                
+                <mat-radio-button value="BANK_TRANSFER">
+                  <mat-icon>account_balance</mat-icon>
+                  Transfer bancar
+                  <span class="payment-note">Vei primi detaliile după plasarea comenzii</span>
+                </mat-radio-button>
+                
+                <mat-radio-button value="CARD" disabled>
+                  <mat-icon>credit_card</mat-icon>
+                  Card bancar (În curând)
+                  <span class="payment-note">Opțiune disponibilă în curând</span>
+                </mat-radio-button>
+              </mat-radio-group>
+
+              <mat-form-field appearance="outline" class="full-width notes-field">
+                <mat-label>Note comandă (opțional)</mat-label>
+                <textarea matInput formControlName="orderNotes" rows="3" 
+                          placeholder="Adaugă orice informații suplimentare despre comandă..."></textarea>
+              </mat-form-field>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Terms and Conditions -->
+          <mat-card class="terms-card">
+            <mat-card-content>
+              <mat-checkbox formControlName="agreeToTerms" required>
+                Am citit și sunt de acord cu 
+                <a href="/terms" target="_blank">Termenii și Condițiile</a> și 
+                <a href="/privacy" target="_blank">Politica de Confidențialitate</a>
+              </mat-checkbox>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Right column - Order Summary -->
+        <div class="order-summary">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Sumar comandă</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-items">
+                <div *ngFor="let item of cart.items" class="summary-item">
+                  <span class="item-name">{{ item.productName }} × {{ item.quantity }}</span>
+                  <span class="item-price">{{ item.subtotal | currency:'RON':'symbol':'1.2-2' }}</span>
+                </div>
+              </div>
+              
+              <mat-divider></mat-divider>
+              
+              <div class="summary-totals">
+                <div class="summary-row">
+                  <span>Subtotal</span>
+                  <span>{{ cart.totalAmount | currency:'RON':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="summary-row">
+                  <span>Transport</span>
+                  <span class="free-shipping">GRATUIT</span>
+                </div>
+                <div class="summary-row total">
+                  <span>Total</span>
+                  <span>{{ cart.totalAmount | currency:'RON':'symbol':'1.2-2' }}</span>
+                </div>
+              </div>
+              
+              <div class="secure-payment">
+                <mat-icon>lock</mat-icon>
+                <span>Plată securizată</span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button 
+                      color="primary" 
+                      type="submit" 
+                      class="place-order-button"
+                      [disabled]="isProcessing || checkoutForm.invalid">
+                <mat-spinner *ngIf="isProcessing" diameter="20"></mat-spinner>
+                <span *ngIf="!isProcessing">
+                  <mat-icon>check_circle</mat-icon>
+                  Plasează comanda
+                </span>
+              </button>
+              
+              <button mat-stroked-button 
+                      type="button" 
+                      routerLink="/cart"
+                      [disabled]="isProcessing">
+                <mat-icon>arrow_back</mat-icon>
+                Înapoi la coș
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

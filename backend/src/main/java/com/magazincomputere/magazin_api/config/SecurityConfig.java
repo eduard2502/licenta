@@ -91,6 +91,12 @@ public class SecurityConfig {
                 // Permite toate celelalte request-uri (pentru frontend-ul Angular)
                 .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.jpg", "/*.webmanifest", "/assets/**").permitAll()
                 .anyRequest().authenticated() // Orice alt request necesită autentificare
+                 // Reguli pentru Cart
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cart/**")).hasAnyRole("USER", "ADMIN")
+                
+                // Reguli pentru Comenzi [cite: 1, 2]
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/orders")).hasAnyRole("USER", "ADMIN") // Finalizare comandă [cite: 2]
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/my-history")).hasAnyRole("USER", "ADMIN") // Istoric comenzi client [cite: 2]
             );
 
         // Necesar pentru H2 console dacă folosești Spring Security cu frame options
