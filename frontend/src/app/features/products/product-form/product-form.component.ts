@@ -1,4 +1,3 @@
-// src/app/features/products/product-form/product-form.component.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
@@ -21,7 +20,7 @@ import { SpecificationDefinition } from '../../../shared/models/specification-de
 import { ProductService } from '../product.service';
 import { CategoryAdminService } from '../../admin/services/category.admin.service';
 import { SpecificationAdminService } from '../../admin/services/specification-admin.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Component({
@@ -39,15 +38,14 @@ export class ProductFormComponent implements OnInit {
   productForm!: FormGroup;
   isEditMode = false;
   productId?: number;
-  isLoading = false;
+  isLoading = true;
   pageTitle = 'Adaugă Produs Nou';
   submitButtonText = 'Salvează Produs';
   error: string | null = null;
 
-  categories$: Observable<Category[]> = of([]);
-  specDefinitions$: Observable<SpecificationDefinition[]> = of([]);
-  
-  // imagePreview: string | ArrayBuffer | null = null; // COMENTAT TEMPORAR
+  // Vom popula aceste array-uri pentru o gestionare mai sigură
+  categories: Category[] = [];
+  specDefinitions: SpecificationDefinition[] = [];
 
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
@@ -61,67 +59,69 @@ export class ProductFormComponent implements OnInit {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]],
       description: ['', [Validators.maxLength(5000)]],
-      price: [null, [Validators.required, Validators.min(0.01), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      // AICI ESTE PRIMA MODIFICARE CHEIE: Am eliminat validatorul de pattern
+      price: [null, [Validators.required, Validators.min(0.01)]],
       stockQuantity: [0, [Validators.required, Validators.min(0), Validators.pattern(/^[0-9]*$/)]],
-      // imageBase64: [null], // COMENTAT TEMPORAR
       categoryId: [null, Validators.required],
       specifications: this.fb.array([])
     });
 
-    this.loadDropdownData();
-
-    const idFromRoute = this.route.snapshot.paramMap.get('id');
-    if (idFromRoute) {
-      this.productId = +idFromRoute;
-      if (!isNaN(this.productId) && this.productId > 0) {
-        this.isEditMode = true;
-        this.pageTitle = 'Editează Produs';
-        this.submitButtonText = 'Actualizează Produs';
-        this.loadProductData(this.productId);
-      } else {
-        this.handleInvalidId('ID produs invalid din rută.');
-      }
-    }
+    this.loadInitialData();
   }
 
-  loadDropdownData(): void {
-    this.categories$ = this.categoryAdminService.getAll().pipe(
-      catchError(err => {
-        this.snackBar.open('Eroare la încărcarea categoriilor.', 'OK', { duration: 3000 });
-        console.error(err);
-        return of([]);
-      })
-    );
-    this.specDefinitions$ = this.specAdminService.getAllDefinitions().pipe(
-      catchError(err => {
-        this.snackBar.open('Eroare la încărcarea definițiilor de specificații.', 'OK', { duration: 3000 });
-        console.error(err);
-        return of([]);
-      })
-    );
-  }
-
-  loadProductData(id: number): void {
+  // A DOUA MODIFICARE CHEIE: Folosim forkJoin pentru a încărca totul sincronizat
+  loadInitialData(): void {
     this.isLoading = true;
-    this.productService.getById(id).subscribe({
-      next: (product: Product) => {
-        this.productForm.patchValue({
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          stockQuantity: product.stockQuantity,
-          categoryId: product.categoryId,
-        });
-        // if (product.imageBase64) { // COMENTAT TEMPORAR
-        //   this.imagePreview = product.imageBase64; 
-        //   this.productForm.get('imageBase64')?.setValue(product.imageBase64, { emitEvent: false });
-        // } // COMENTAT TEMPORAR
-        this.specificationsFormArray.clear();
-        product.specifications?.forEach(spec => this.addSpecification(spec));
-        this.isLoading = false;
-      },
-      error: (err: HttpErrorResponse) => this.handleLoadError('Eroare la încărcarea datelor produsului.', err)
+    const idFromRoute = this.route.snapshot.paramMap.get('id');
+    this.isEditMode = !!idFromRoute;
+    this.productId = idFromRoute ? +idFromRoute : undefined;
+
+    // Definim sursele de date
+    const categories$ = this.categoryAdminService.getAll();
+    const specDefinitions$ = this.specAdminService.getAllDefinitions();
+    const product$ = this.isEditMode && this.productId
+      ? this.productService.getById(this.productId)
+      : of(null);
+
+    forkJoin({
+      categories: categories$,
+      specDefinitions: specDefinitions$,
+      product: product$
+    }).pipe(
+      catchError(err => {
+        this.handleLoadError('Eroare la încărcarea datelor necesare pentru formular.', err);
+        return of(null);
+      })
+    ).subscribe(result => {
+      if (result) {
+        this.categories = result.categories;
+        this.specDefinitions = result.specDefinitions;
+        
+        if (this.isEditMode) {
+          this.pageTitle = 'Editează Produs';
+          this.submitButtonText = 'Actualizează Produs';
+          if (result.product) {
+            this.populateForm(result.product);
+          } else {
+             this.handleInvalidId('Produsul nu a putut fi încărcat.');
+          }
+        }
+      }
+      this.isLoading = false;
     });
+  }
+
+  populateForm(product: Product): void {
+    this.productForm.patchValue({
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stockQuantity: product.stockQuantity,
+      categoryId: product.categoryId,
+    });
+    
+    this.specificationsFormArray.clear();
+    product.specifications?.forEach(spec => this.addSpecification(spec));
   }
 
   get specificationsFormArray(): FormArray {
@@ -143,55 +143,31 @@ export class ProductFormComponent implements OnInit {
     this.specificationsFormArray.removeAt(index);
   }
 
-  /* // COMENTAT TEMPORAR - Funcționalitatea pentru imagini
-  onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result;
-        this.productForm.patchValue({ imageBase64: reader.result as string });
-        this.productForm.get('imageBase64')?.markAsDirty(); 
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  clearImage(): void {
-    this.imagePreview = null;
-    this.productForm.patchValue({ imageBase64: null });
-    this.productForm.get('imageBase64')?.markAsDirty();
-    const fileInput = document.getElementById('productImageInput') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
-  }
-  */
-
   onSubmit(): void {
+    if (this.isEditMode && this.productForm.pristine) {
+      this.snackBar.open('Nu ați făcut nicio modificare pentru a salva.', 'OK', { duration: 3000 });
+      return;
+    }
+      
     if (this.productForm.invalid) {
-      this.snackBar.open('Formular invalid. Verificați câmpurile.', 'OK', { duration: 3000 });
+      this.snackBar.open('Formular invalid. Verificați câmpurile marcate cu roșu.', 'OK', { duration: 4000 });
       this.productForm.markAllAsTouched();
       return;
     }
+
     this.isLoading = true;
     const formValue = this.productForm.getRawValue();
-    const productData: Product = {
+    const productData: Omit<Product, 'id'> = {
         ...formValue,
-        // imageBase64: formValue.imageBase64, // COMENTAT TEMPORAR
         specifications: formValue.specifications.map((spec: any) => ({
             definitionId: spec.definitionId,
             value: spec.value
         }))
     };
-    // if (productData.imageBase64 === '') { // COMENTAT TEMPORAR
-    //     productData.imageBase64 = null;    // COMENTAT TEMPORAR
-    // } // COMENTAT TEMPORAR
-
-
+    
     const operation = this.isEditMode && this.productId
-      ? this.productService.update(this.productId, productData)
-      : this.productService.create(productData);
+      ? this.productService.update(this.productId, productData as Product)
+      : this.productService.create(productData as Product);
 
     operation.subscribe({
       next: () => {

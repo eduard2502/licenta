@@ -9,10 +9,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // Aplică CORS pentru toate căile sub /api
-                .allowedOrigins("http://localhost:4200") // URL-ul frontend-ului Angular în dezvoltare
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+        registry.addMapping("/**") // Se aplică tuturor endpoint-urilor
+                // MODIFICARE: Specificăm explicit originea permisă în loc de "*"
+                .allowedOrigins("http://localhost:4200", "http://localhost:8080") 
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Metodele HTTP permise
+                .allowedHeaders("*") // Permite toate headerele
+                .allowCredentials(true); // Permite trimiterea de credentials (cookies, token-uri etc.)
     }
 }

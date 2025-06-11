@@ -22,7 +22,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true) // Permite @PreAuthorize pe metode
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -49,59 +49,54 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> {}) // Utilizează configurația CORS din WebConfig sau definește una specifică aici
-            .csrf(csrf -> csrf.disable()) // Dezactivează CSRF pentru API-uri stateless (comun pentru JWT)
+            .cors(cors -> {})
+            .csrf(csrf -> csrf.disable())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // API stateless
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Permite request-uri către Swagger/OpenAPI și H2 console fără autentificare
-                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/h2-console/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll() // Endpoint-urile de autentificare
+                // -- ÎNCEPUT: REGULI SPECIFICE (TREBUIE SĂ FIE PRIMELE) --
 
-                // Reguli pentru Produse [cite: 1, 2]
+                // Permite acces liber la autentificare, produse, categorii etc.
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/h2-console/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/products/**")).permitAll()
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/categories/**")).permitAll() // Vizualizare categorii [cite: 1]
-                // Admin poate crea, actualiza, șterge produse și categorii
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/categories/**")).permitAll()
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/specifications/**")).permitAll()
+
+                // Reguli pentru Coș (Cart)
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cart/**")).hasAnyRole("USER", "ADMIN")
+                
+                // Reguli pentru Produse, Categorii, Specificații (doar Admin poate modifica)
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/products")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/products/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/products/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/categories")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/categories/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/categories/**")).hasRole("ADMIN")
-
-                // Reguli pentru Specificații [cite: 1]
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/specifications/**")).permitAll() // Toți pot vedea specificațiile
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/specifications")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/specifications/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/specifications/**")).hasRole("ADMIN")
 
-                // Reguli pentru Comenzi [cite: 1, 2]
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/orders")).hasAnyRole("USER", "ADMIN") // Finalizare comandă [cite: 2]
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/my-history")).hasAnyRole("USER", "ADMIN") // Istoric comenzi client [cite: 2]
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/**")).hasRole("ADMIN") // Admin vede toate comenzile
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/orders/**/status")).hasRole("ADMIN") // Admin schimbă starea comenzii [cite: 2]
+                // Reguli pentru Comenzi (Orders)
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/orders")).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/my-history")).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/**")).hasRole("ADMIN")
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/orders/**/status")).hasRole("ADMIN")
 
-                // Reguli pentru Utilizatori și Clienți (Gestionare Admin) [cite: 1]
+                // Reguli pentru Utilizatori, Clienți și Rapoarte (doar Admin)
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/users/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/customers/**")).hasRole("ADMIN")
-
-                // Reguli pentru Rapoarte (Admin) [cite: 1]
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reports/**")).hasRole("ADMIN")
-
-                // Permite toate celelalte request-uri (pentru frontend-ul Angular)
-                .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.jpg", "/*.webmanifest", "/assets/**").permitAll()
-                .anyRequest().authenticated() // Orice alt request necesită autentificare
-                 // Reguli pentru Cart
-                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cart/**")).hasAnyRole("USER", "ADMIN")
                 
-                // Reguli pentru Comenzi [cite: 1, 2]
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/orders")).hasAnyRole("USER", "ADMIN") // Finalizare comandă [cite: 2]
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/my-history")).hasAnyRole("USER", "ADMIN") // Istoric comenzi client [cite: 2]
+                // Permite fișierele statice pentru frontend
+                .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.jpg", "/*.webmanifest", "/assets/**").permitAll()
+
+                // -- FINAL: REGULA GENERALĂ (TREBUIE SĂ FIE ULTIMA) --
+                .anyRequest().authenticated()
             );
 
-        // Necesar pentru H2 console dacă folosești Spring Security cu frame options
+        // Necesar pentru H2 console
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
-
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

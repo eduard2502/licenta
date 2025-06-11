@@ -27,6 +27,9 @@ import { UserOrderHistoryComponent } from './features/user-dashboard/user-order-
 import { userGuard } from './auth/user.guard';
 import { adminGuard } from './auth/admin.guard';
 
+import { ShoppingCartComponent } from './features/shopping-cart/shopping-cart.component';
+import { CheckoutComponent } from './features/checkout/checkout.component';
+
 export const routes: Routes = [
   // Pagina principala (default), publica
   { path: '', component: HomePageComponent, title: 'VipeX Technology' },
@@ -38,6 +41,11 @@ export const routes: Routes = [
   { path: 'products-list', component: ProductListComponent, title: 'Catalog Produse' }, // Ruta pentru tabelul vechi
   { path: 'products/:id', component: ProductDetailComponent, title: 'Detalii Produs' },
 
+   // Ruta pentru coșul de cumpărături
+  { path: 'cart', component: ShoppingCartComponent, canActivate: [userGuard], title: 'Coș de Cumpărături' },
+  // Ruta pentru finalizarea comenzii
+  { path: 'checkout', component: CheckoutComponent, canActivate: [userGuard], title: 'Finalizare Comandă' },
+  
   // Rute protejate pentru Utilizator (fără un dashboard-wrapper)
   { path: 'my-orders', component: UserOrderHistoryComponent, canActivate: [userGuard], title: 'Comenzile Mele' },
   // { path: 'my-profile', component: UserProfileComponent, canActivate: [userGuard], title: 'Profilul Meu' },

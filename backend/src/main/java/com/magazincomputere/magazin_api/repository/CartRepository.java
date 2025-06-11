@@ -19,7 +19,5 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     
     Optional<Cart> findBySessionId(String sessionId);
     
-    // Pentru ștergerea coșurilor vechi ale sesiunilor guest
-    @Query("SELECT c FROM Cart c WHERE c.sessionId IS NOT NULL AND c.lastUpdated < :expirationDate")
-    List<Cart> findExpiredGuestCarts(@Param("expirationDate") LocalDateTime expirationDate);
+    
 }

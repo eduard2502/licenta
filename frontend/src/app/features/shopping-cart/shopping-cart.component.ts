@@ -48,7 +48,7 @@ export class ShoppingCartComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
-    if (!this.authService.isLoggedIn()) {
+    if (!this.authService.isLoggedIn) {
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/cart' } });
       return;
     }
