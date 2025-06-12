@@ -22,6 +22,7 @@ import { AdminUserListComponent } from './features/admin/admin-users/admin-user-
 import { AdminUserFormComponent } from './features/admin/admin-users/admin-user-form/admin-user-form.component';
 import { ProductFormComponent } from './features/products/product-form/product-form.component';
 import { UserOrderHistoryComponent } from './features/user-dashboard/user-order-history/user-order-history.component';
+import { SignupComponent } from './signup/signup.component';
 
 // Guards pentru securizarea rutelor
 import { userGuard } from './auth/user.guard';
@@ -49,6 +50,7 @@ export const routes: Routes = [
   // Rute protejate pentru Utilizator (fără un dashboard-wrapper)
   { path: 'my-orders', component: UserOrderHistoryComponent, canActivate: [userGuard], title: 'Comenzile Mele' },
   // { path: 'my-profile', component: UserProfileComponent, canActivate: [userGuard], title: 'Profilul Meu' },
+  { path: 'signup', component: SignupComponent, title: 'Înregistrare' },
 
   // Rute protejate pentru Administrator
   {

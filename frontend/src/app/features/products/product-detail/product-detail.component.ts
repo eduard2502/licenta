@@ -1,4 +1,3 @@
-// src/app/features/products/product-detail/product-detail.component.ts
 import { Component, OnInit, inject, Pipe, PipeTransform } from '@angular/core';
 import { CommonModule, CurrencyPipe, TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -12,10 +11,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-
 import { Product } from '../../../shared/models/product.model';
 import { ProductService } from '../product.service';
 import { AuthService } from '../../../auth/auth.service';
+import { CartService } from '../../shopping-cart/cart.service';
+import { AddToCartRequest } from '../../../shared/models/cart.model';
 
 // Pipe custom pentru nl2br
 @Pipe({
@@ -26,7 +26,6 @@ export class Nl2brPipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) {}
   transform(value: string | null | undefined): SafeHtml {
     if (!value) return '';
-    // Înlocuiește \n cu <br> și sanitizează HTML-ul
     return this.sanitizer.bypassSecurityTrustHtml(value.replace(/\n/g, '<br/>'));
   }
 }
@@ -47,7 +46,7 @@ export class Nl2brPipe implements PipeTransform {
     MatDividerModule,
     CurrencyPipe,
     TitleCasePipe,
-    Nl2brPipe // Importă pipe-ul custom
+    Nl2brPipe
   ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss']
@@ -64,6 +63,7 @@ export class ProductDetailComponent implements OnInit {
   private productService = inject(ProductService);
   private snackBar = inject(MatSnackBar);
   public authService = inject(AuthService);
+  private cartService = inject(CartService);
 
   ngOnInit(): void {
     const idFromRoute = this.route.snapshot.paramMap.get('id');
@@ -71,7 +71,7 @@ export class ProductDetailComponent implements OnInit {
       this.productId = +idFromRoute;
       if (!isNaN(this.productId) && this.productId > 0) {
         this.loadProductDetails();
-        this.isAdminView = this.router.url.includes('/admin/products/edit/') || this.router.url.endsWith(`/admin/products/${this.productId}`); // Detectează ruta de admin specifică
+        this.isAdminView = this.router.url.includes('/admin/');
       } else {
         this.handleInvalidId();
       }
@@ -101,17 +101,13 @@ export class ProductDetailComponent implements OnInit {
         const errMsg = err.error?.message || err.message || 'Eroare necunoscută.';
         this.snackBar.open(`${this.error} ${errMsg}`, 'Închide', { duration: 5000 });
         console.error(err);
-        if (this.isAdminView) {
-          this.router.navigate(['/admin/products']);
-        } else {
-           this.router.navigate(['/products']); // Redirecționează la lista publică de produse
-        }
+        this.router.navigate(['/']);
       }
     });
   }
-  
+
   deleteProduct(): void {
-    if (!this.product || !this.product.id) return;
+    if (!this.product || typeof this.product.id === 'undefined') return;
     const confirmation = window.confirm('Sunteți sigur că doriți să ștergeți acest produs?');
     if (confirmation) {
       this.isLoading = true;
@@ -130,12 +126,43 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
-  // Adaugă o metodă pentru a obține numele definiției specificației dacă nu este direct în `product.specifications`
-  // Acest lucru ar necesita ca `ProductDto` din backend să includă și numele definiției, nu doar `definitionId`.
-  // Modelul actual `SpecificationValue` are `name` și `unit` opționale, care ar trebui populate în `ProductFormComponent`
-  // la selectarea unei `SpecificationDefinition` sau la încărcarea produsului.
-  // Backend-ul ar trebui să returneze aceste detalii în `ProductDto.specifications`.
+  addToCart(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.snackBar.open('Trebuie să fii autentificat pentru a adăuga produse în coș.', 'Login', {
+        duration: 5000,
+      }).onAction().subscribe(() => {
+        this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      });
+      return;
+    }
 
-  // Dacă `product.specifications` conține deja `name` și `unit` pentru fiecare specificație (ceea ce ar fi ideal),
-  // atunci template-ul HTML este corect.
+    // AICI ESTE CORECȚIA: Verificăm și dacă produsul are un ID.
+    if (!this.product || typeof this.product.id === 'undefined') {
+      this.snackBar.open('Detaliile produsului sunt incomplete. Vă rugăm reîncercați.', 'Închide', { duration: 3000 });
+      return;
+    }
+
+    const request: AddToCartRequest = {
+      productId: this.product.id, // Acum TypeScript știe sigur că `this.product.id` este un număr.
+      quantity: 1
+    };
+
+    this.isLoading = true;
+    this.cartService.addToCart(request).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.snackBar.open(`"${this.product?.name}" a fost adăugat în coș!`, 'OK', {
+          duration: 3000,
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const errorMessage = err.error?.message || 'A apărut o eroare la adăugarea produsului în coș.';
+        this.snackBar.open(errorMessage, 'Închide', {
+          duration: 5000
+        });
+        console.error('Error adding to cart:', err);
+      }
+    });
+  }
 }

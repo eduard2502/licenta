@@ -136,6 +136,6 @@ export class ShoppingCartComponent implements OnInit {
   }
 
   continueShopping(): void {
-    this.router.navigate(['/products']);
+    this.router.navigate(['/products-list']);
   }
 }

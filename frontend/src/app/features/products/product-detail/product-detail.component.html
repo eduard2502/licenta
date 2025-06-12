@@ -54,7 +54,9 @@
             <h4>Descriere:</h4>
             <p [innerHTML]="product.description | nl2br"></p>
           </div>
-          <button *ngIf="!isAdminView" mat-raised-button color="accent" class="add-to-cart-button" [disabled]="product.stockQuantity === 0">
+          <button *ngIf="!isAdminView" mat-raised-button color="accent" class="add-to-cart-button" 
+                  [disabled]="product.stockQuantity === 0 || isLoading"
+                  (click)="addToCart()">
             <mat-icon>add_shopping_cart</mat-icon> Adaugă în Coș
           </button>
         </div>
