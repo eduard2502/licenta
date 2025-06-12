@@ -1,0 +1,328 @@
+.reports-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.reports-header {
+  margin-bottom: 24px;
+  background-color: #1e1e1e;
+
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5em;
+      color: #448AFF;
+
+      mat-icon {
+        font-size: 1.2em;
+      }
+    }
+  }
+}
+
+.report-form {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  button {
+    height: 56px;
+  }
+
+  .download-buttons {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #aaa;
+
+  p {
+    margin-top: 16px;
+    font-size: 1.1em;
+  }
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+
+  .summary-card {
+    background-color: #1e1e1e;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+
+    mat-card-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px;
+    }
+
+    .summary-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      display: flex;
+           align-items: center;
+     justify-content: center;
+
+     mat-icon {
+       font-size: 32px;
+       color: white;
+     }
+
+     &.sales {
+       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     }
+
+     &.revenue {
+       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+     }
+
+     &.stock {
+       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+     }
+
+     &.users {
+       background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+     }
+   }
+
+   .summary-info {
+     flex: 1;
+
+     h3 {
+       margin: 0 0 8px 0;
+       font-size: 0.9em;
+       color: #aaa;
+       font-weight: 400;
+     }
+
+     .summary-value {
+       margin: 0;
+       font-size: 2em;
+       font-weight: 500;
+       color: #448AFF;
+     }
+
+     .summary-label {
+       margin: 0;
+       font-size: 0.85em;
+       color: #888;
+     }
+   }
+ }
+}
+
+.report-tabs {
+ background-color: transparent;
+
+ ::ng-deep {
+   .mat-mdc-tab-labels {
+     background-color: #1e1e1e;
+     border-radius: 8px 8px 0 0;
+   }
+
+   .mat-mdc-tab-label {
+     color: #aaa;
+     font-weight: 500;
+
+     &.mat-mdc-tab-label-active {
+       color: #448AFF;
+     }
+   }
+
+   .mat-ink-bar {
+     background-color: #448AFF;
+   }
+ }
+}
+
+.tab-content {
+ padding: 24px 0;
+}
+
+.chart-container {
+ position: relative;
+ height: 300px;
+ margin: 20px 0;
+}
+
+.full-width {
+ width: 100%;
+}
+
+.mt-3 {
+ margin-top: 24px;
+}
+
+.my-3 {
+ margin: 24px 0;
+}
+
+.stock-overview {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 20px;
+
+ @media (max-width: 1024px) {
+   grid-template-columns: 1fr;
+ }
+}
+
+.stock-stats {
+ display: flex;
+ flex-direction: column;
+ gap: 16px;
+
+ .stat-item {
+   display: flex;
+   align-items: center;
+   gap: 16px;
+   padding: 16px;
+   background: rgba(255, 255, 255, 0.05);
+   border-radius: 8px;
+
+   mat-icon {
+     font-size: 32px;
+   }
+
+   .stat-value {
+     margin: 0;
+     font-size: 1.5em;
+     font-weight: 500;
+   }
+
+   .stat-label {
+     margin: 0;
+     font-size: 0.9em;
+     color: #aaa;
+   }
+ }
+}
+
+.user-metrics {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 20px;
+ margin-bottom: 24px;
+
+ .metric {
+   text-align: center;
+   padding: 20px;
+   background: rgba(255, 255, 255, 0.05);
+   border-radius: 8px;
+
+   h4 {
+     margin: 0 0 12px 0;
+     color: #aaa;
+     font-weight: 400;
+   }
+
+   .metric-value {
+     margin: 0;
+     font-size: 2.5em;
+     font-weight: 500;
+     color: #448AFF;
+   }
+ }
+}
+
+.role-distribution {
+ display: flex;
+ flex-direction: column;
+ gap: 12px;
+ margin-top: 16px;
+
+ .role-item {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+
+   .role-count {
+     color: #aaa;
+     font-size: 0.9em;
+   }
+ }
+}
+
+.user-stats {
+ mat-card {
+   background-color: #1e1e1e;
+ }
+}
+
+// Stiluri pentru tabele
+table {
+ background-color: transparent;
+
+ th {
+   font-weight: 500;
+   color: #aaa;
+   font-size: 0.9em;
+ }
+
+ td {
+   color: #ddd;
+ }
+
+ tr:hover {
+   background-color: rgba(255, 255, 255, 0.05);
+ }
+}
+
+mat-chip {
+ font-size: 0.85em;
+}
+
+// Responsive
+@media (max-width: 768px) {
+ .report-form {
+   flex-direction: column;
+
+   mat-form-field,
+   button {
+     width: 100%;
+   }
+
+   .download-buttons {
+     width: 100%;
+     margin-left: 0;
+     margin-top: 12px;
+
+     button {
+       flex: 1;
+     }
+   }
+ }
+
+ .summary-cards {
+   grid-template-columns: 1fr;
+ }
+
+ .user-metrics {
+   grid-template-columns: 1fr;
+ }
+}
