@@ -32,7 +32,9 @@
             Parola trebuie să aibă cel puțin 6 caractere.
           </mat-error>
         </mat-form-field>
-
+           <mat-checkbox formControlName="rememberMe" class="remember-me-checkbox">
+             Ține-mă minte
+           </mat-checkbox>
         <button mat-raised-button color="primary" type="submit" class="full-width login-button" [disabled]="isLoading || loginForm.invalid">
           <mat-spinner *ngIf="isLoading" diameter="20" mode="indeterminate" class="button-spinner"></mat-spinner>
           <span *ngIf="!isLoading">Intră în Cont</span>

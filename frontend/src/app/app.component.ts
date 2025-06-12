@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider'; // <<< CORECTAT: Import MatDividerModule
-
+import { InactivityService } from './auth/inactivity.service';
 import { AuthService } from './auth/auth.service';
 // import { ShoppingCartService } from './features/shopping-cart/shopping-cart.service';
 import { Subscription } from 'rxjs';
@@ -45,6 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public authService = inject(AuthService);
   private router = inject(Router);
   // private shoppingCartService = inject(ShoppingCartService);
+  private inactivityService = inject(InactivityService);
 
   hideToolbar = false;
 
@@ -53,6 +54,12 @@ export class AppComponent implements OnInit, OnDestroy {
       this.isLoggedIn = !!user;
       this.username = user ? user.username : null;
       this.userRole = this.authService.role;
+      
+       if (this.isLoggedIn) {
+        this.inactivityService.startWatching();
+      } else {
+        this.inactivityService.stopWatching();
+      }
     });
 
     this.isLoggedIn = this.authService.isLoggedIn();
@@ -74,7 +81,13 @@ export class AppComponent implements OnInit, OnDestroy {
     //   this.cartItemCount = count;
     // });
   }
-
+ private clearNonPersistentAuth(): void {
+    // If using sessionStorage (non-persistent), this will already be cleared
+    // This is just an extra safety measure
+    if (!this.authService.isLoggedIn()) {
+      this.authService.logout();
+    }
+  }
   logout(): void {
     this.authService.logout();
   }
@@ -89,5 +102,6 @@ export class AppComponent implements OnInit, OnDestroy {
     // if (this.cartSubscription) {
     //   this.cartSubscription.unsubscribe();
     // }
+    this.inactivityService.stopWatching();
   }
 }

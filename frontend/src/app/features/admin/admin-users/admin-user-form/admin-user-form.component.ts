@@ -120,8 +120,12 @@ export class AdminUserFormComponent implements OnInit {
     this.isLoading = true;
     const userData: UserUpdateDto = {
       email: this.userForm.get('email')?.value,
-      roles: selectedRolesValue // <<< CORECTAT: Preia valorile din FormControl
+      roles: selectedRolesValue
     };
+
+    // Log the data being sent
+    console.log('Sending update data:', JSON.stringify(userData));
+    console.log('User ID:', this.userId);
 
     this.userAdminService.updateUser(this.userId, userData).subscribe({
       next: () => {
@@ -129,7 +133,7 @@ export class AdminUserFormComponent implements OnInit {
         this.snackBar.open('Utilizator actualizat cu succes!', 'OK', { duration: 3000 });
         this.router.navigate(['/admin/users']);
       },
-      error: (err: HttpErrorResponse) => this.handleSubmitError('Eroare la actualizarea utilizatorului.', err) // Tipare explicită
+      error: (err: HttpErrorResponse) => this.handleSubmitError('Eroare la actualizarea utilizatorului.', err)
     });
   }
   

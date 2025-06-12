@@ -1,8 +1,9 @@
 package com.magazincomputere.magazin_api.service;
 
 import com.magazincomputere.magazin_api.dto.UserDto;
+import com.magazincomputere.magazin_api.dto.UserUpdateDto; // Import the new DTO
 import com.magazincomputere.magazin_api.exception.ResourceNotFoundException;
-import com.magazincomputere.magazin_api.model.User; // Importă și Role, ERole
+import com.magazincomputere.magazin_api.model.User;
 import com.magazincomputere.magazin_api.model.Role;
 import com.magazincomputere.magazin_api.model.ERole;
 import com.magazincomputere.magazin_api.repository.UserRepository;
@@ -27,7 +28,7 @@ public class UserService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Injectează pentru a parola parolele
+    private PasswordEncoder passwordEncoder;
 
     private UserDto convertToDto(User user) {
         UserDto dto = new UserDto();
@@ -35,18 +36,18 @@ public class UserService {
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         if (user.getRoles() != null) {
-            dto.setRoles(user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toSet()));
+            dto.setRoles(user.getRoles().stream()
+                .map(role -> role.getName().name())
+                .collect(Collectors.toSet()));
         }
         return dto;
     }
 
-    // Notă: Nu vom avea convertToEntity care primește parola în clar aici
-    // Crearea utilizatorilor se face prin AuthController/Signup sau un DTO specific.
-    // Actualizarea parolei ar trebui să aibă un endpoint și DTO dedicat.
-
     @Transactional(readOnly = true)
     public List<UserDto> findAllUsers() {
-        return userRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
+        return userRepository.findAll().stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -57,23 +58,34 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public UserDto updateUser(Long id, UserUpdateDto userUpdateDto) { // Accept UserUpdateDto
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-        // Nu permitem schimbarea username-ului prin acest DTO general
-        // existingUser.setUsername(userDto.getUsername()); // Comentat intenționat
+        // Log for debugging
+        System.out.println("Existing user: " + existingUser.getUsername());
+        System.out.println("Update data - email: " + userUpdateDto.getEmail());
+        System.out.println("Update data - roles: " + userUpdateDto.getRoles());
 
-        existingUser.setEmail(userDto.getEmail());
+        // Update email
+        existingUser.setEmail(userUpdateDto.getEmail());
 
-        if (userDto.getRoles() != null && !userDto.getRoles().isEmpty()) {
+        // Update roles if provided
+        if (userUpdateDto.getRoles() != null && !userUpdateDto.getRoles().isEmpty()) {
             Set<Role> newRoles = new HashSet<>();
-            userDto.getRoles().forEach(roleName -> {
-                ERole eRole = ERole.valueOf(roleName); // Presupune că rolurile din DTO sunt valide
-                Role role = roleRepository.findByName(eRole)
-                        .orElseThrow(() -> new RuntimeException("Error: Role " + roleName + " is not found."));
-                newRoles.add(role);
-            });
+            for (String roleName : userUpdateDto.getRoles()) {
+                // Handle both with and without ROLE_ prefix
+                String normalizedRoleName = roleName.startsWith("ROLE_") ? roleName : "ROLE_" + roleName;
+                
+                try {
+                    ERole eRole = ERole.valueOf(normalizedRoleName);
+                    Role role = roleRepository.findByName(eRole)
+                            .orElseThrow(() -> new RuntimeException("Error: Role " + normalizedRoleName + " is not found."));
+                    newRoles.add(role);
+                } catch (IllegalArgumentException e) {
+                    throw new RuntimeException("Error: Invalid role name " + roleName);
+                }
+            }
             existingUser.setRoles(newRoles);
         }
 
@@ -86,7 +98,6 @@ public class UserService {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id: " + id);
         }
-        // TODO: Adaugă logica de verificare a dependențelor (comenzi, etc.) înainte de ștergere
         userRepository.deleteById(id);
     }
 }

@@ -1,3 +1,4 @@
+import { registerables } from 'chart.js';
 // src/app/login/login.component.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -10,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MatCheckboxModule } from '@angular/material/checkbox'; 
 
 import { AuthService } from '../auth/auth.service'; // Serviciul de autentificare
 
@@ -27,7 +28,8 @@ import { AuthService } from '../auth/auth.service'; // Serviciul de autentificar
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatCheckboxModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
@@ -47,7 +49,8 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      rememberMe: [false]
     });
 
     // Preia URL-ul de redirectare din query params, dacă există
@@ -74,9 +77,9 @@ export class LoginComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const { username, password } = this.loginForm.value;
+    const { username, password, rememberMe } = this.loginForm.value;
 
-    this.authService.login(username, password).subscribe({
+    this.authService.login(username, password, rememberMe).subscribe({
       next: (success) => {
         this.isLoading = false;
         if (success) {
