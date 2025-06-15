@@ -2,11 +2,23 @@
 <div class="user-product-list-container">
   <div class="header">
     <h2>Produsele Noastre</h2>
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Caută produse</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Caută după nume, categorie...">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+    <div class="filters-container">
+      <mat-form-field appearance="outline" class="filter-field search-field">
+        <mat-label>Caută produse</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Caută după nume, categorie...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="filter-field category-field">
+        <mat-label>Filtrează după categorie</mat-label>
+        <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="applyCategoryFilter()">
+          <mat-option [value]="null">Toate categoriile</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
 
   <div *ngIf="isLoading" class="loading-indicator">

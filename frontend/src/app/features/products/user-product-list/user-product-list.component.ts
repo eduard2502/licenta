@@ -8,13 +8,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select'; // Add this import
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 import { Product } from '../../../shared/models/product.model';
+import { Category } from '../../../shared/models/category.model'; // Add this import
 import { ProductService } from '../product.service';
 import { CartService } from '../../shopping-cart/cart.service';
+import { CategoryAdminService } from '../../admin/services/category.admin.service'; // Add this import
 import { AddToCartRequest } from '../../../shared/models/cart.model';
 
 @Component({
@@ -29,6 +32,7 @@ import { AddToCartRequest } from '../../../shared/models/cart.model';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule, // Add this import
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatPaginatorModule,
@@ -41,6 +45,9 @@ import { AddToCartRequest } from '../../../shared/models/cart.model';
 export class UserProductListComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  categories: Category[] = []; // Add categories array
+  selectedCategoryId: number | null = null; // Add selected category tracking
+  searchText: string = ''; // Add search text tracking
   isLoading = true;
   error: string | null = null;
   isAddingToCart: { [key: number]: boolean } = {};
@@ -53,10 +60,24 @@ export class UserProductListComponent implements OnInit {
 
   private productService = inject(ProductService);
   private cartService = inject(CartService);
+  private categoryService = inject(CategoryAdminService); // Inject category service
   private snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
+    this.loadCategories(); // Load categories first
     this.loadProducts();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAll().subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (err) => {
+        console.error('Failed to load categories:', err);
+        // Don't show error to user as categories are optional for filtering
+      }
+    });
   }
 
   loadProducts(): void {
@@ -65,7 +86,7 @@ export class UserProductListComponent implements OnInit {
     this.productService.getAll().subscribe({
       next: (data) => {
         this.products = data;
-        this.filteredProducts = data;
+        this.applyFilters(); // Apply filters after loading
         this.isLoading = false;
       },
       error: (err) => {
@@ -79,17 +100,35 @@ export class UserProductListComponent implements OnInit {
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    
-    if (!filterValue) {
-      this.filteredProducts = this.products;
-    } else {
-      this.filteredProducts = this.products.filter(product => 
-        product.name.toLowerCase().includes(filterValue) ||
-        product.categoryName?.toLowerCase().includes(filterValue) ||
-        product.description?.toLowerCase().includes(filterValue)
+    this.searchText = filterValue;
+    this.applyFilters();
+  }
+
+  applyCategoryFilter(): void {
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    let filtered = this.products;
+
+    // Apply text filter
+    if (this.searchText) {
+      filtered = filtered.filter(product => 
+        product.name.toLowerCase().includes(this.searchText) ||
+        product.categoryName?.toLowerCase().includes(this.searchText) ||
+        product.description?.toLowerCase().includes(this.searchText)
       );
     }
-    
+
+    // Apply category filter
+    if (this.selectedCategoryId !== null) {
+      filtered = filtered.filter(product => 
+        product.categoryId === this.selectedCategoryId
+      );
+    }
+
+    this.filteredProducts = filtered;
+
     // Reset to first page when filtering
     this.pageIndex = 0;
     if (this.paginator) {
