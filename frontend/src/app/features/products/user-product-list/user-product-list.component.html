@@ -1,0 +1,77 @@
+<!-- frontend/src/app/features/products/user-product-list/user-product-list.component.html -->
+<div class="user-product-list-container">
+  <div class="header">
+    <h2>Produsele Noastre</h2>
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Caută produse</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Caută după nume, categorie...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Se încarcă produsele...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-message">
+    <p>{{ error }}</p>
+    <button mat-stroked-button color="warn" (click)="loadProducts()">Reîncearcă</button>
+  </div>
+
+  <div *ngIf="!isLoading && !error && filteredProducts.length === 0" class="no-data">
+    <p>Nu există produse disponibile momentan.</p>
+  </div>
+
+  <!-- Grid View for Products -->
+  <div class="products-grid" *ngIf="!isLoading && !error && filteredProducts.length > 0">
+    <mat-card *ngFor="let product of getPaginatedProducts()" class="product-card">
+      <div class="product-image" [routerLink]="['/products', product.id]">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      
+      <mat-card-header [routerLink]="['/products', product.id]">
+        <mat-card-title>{{ product.name }}</mat-card-title>
+        <mat-card-subtitle>{{ product.categoryName }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="product-info">
+          <p class="price">{{ product.price | currency:'RON':'symbol':'1.2-2' }}</p>
+          <p class="stock" [class.in-stock]="product.stockQuantity > 0" [class.out-of-stock]="product.stockQuantity === 0">
+            {{ product.stockQuantity > 0 ? 'În stoc: ' + product.stockQuantity + ' buc.' : 'Stoc epuizat' }}
+          </p>
+        </div>
+        
+        <div class="product-description" *ngIf="product.description">
+          <p>{{ product.description | slice:0:100 }}{{ product.description.length > 100 ? '...' : '' }}</p>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-button color="primary" [routerLink]="['/products', product.id]">
+          <mat-icon>visibility</mat-icon>
+          Vezi detalii
+        </button>
+        <button mat-raised-button color="accent" 
+                (click)="addToCart(product)" 
+                [disabled]="product.stockQuantity === 0 || isAddingToCart[product.id!]">
+          <mat-spinner *ngIf="isAddingToCart[product.id!]" diameter="20" style="display: inline-block; margin-right: 5px;"></mat-spinner>
+          <mat-icon *ngIf="!isAddingToCart[product.id!]">add_shopping_cart</mat-icon>
+          {{ product.stockQuantity === 0 ? 'Stoc epuizat' : 'Adaugă în coș' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="!isLoading && !error && filteredProducts.length > 0">
+    <mat-paginator [length]="filteredProducts.length"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[6, 12, 24, 48]"
+                   [pageIndex]="pageIndex"
+                   (page)="onPageChange($event)"
+                   showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

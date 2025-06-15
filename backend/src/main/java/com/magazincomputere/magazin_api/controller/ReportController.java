@@ -11,15 +11,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @RestController
-@RequestMapping("/api/admin/reports")
+// Am actualizat ruta de bază pentru a se potrivi cu celelalte controllere de admin
+@RequestMapping("/api/admin/reports") 
 @PreAuthorize("hasRole('ADMIN')")
 public class ReportController {
 
     @Autowired
     private ReportService reportService;
 
+    // Endpoint pentru a vedea datele raportului în format JSON (util pentru debugging)
     @GetMapping("/general")
     public ResponseEntity<GeneralReportDto> generateGeneralReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -28,28 +31,8 @@ public class ReportController {
         GeneralReportDto report = reportService.generateGeneralReport(startDate, endDate);
         return ResponseEntity.ok(report);
     }
-
-    @GetMapping("/sales")
-    public ResponseEntity<SalesReportDto> getSalesReport(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        
-        SalesReportDto report = reportService.generateSalesReport(startDate, endDate);
-        return ResponseEntity.ok(report);
-    }
-
-    @GetMapping("/stock")
-    public ResponseEntity<StockReportDto> getStockReport() {
-        StockReportDto report = reportService.generateStockReport();
-        return ResponseEntity.ok(report);
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<UserReportDto> getUserReport() {
-        UserReportDto report = reportService.generateUserReport();
-        return ResponseEntity.ok(report);
-    }
-
+    
+    // Endpoint unic și robust pentru descărcarea rapoartelor
     @GetMapping("/download")
     public ResponseEntity<byte[]> downloadReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -60,21 +43,29 @@ public class ReportController {
         String contentType;
         String fileName;
 
+        // Construim un nume de fișier dinamic, care include perioada
+        String dateSuffix = startDate.toString() + "_to_" + endDate.toString();
+
         if ("pdf".equalsIgnoreCase(format)) {
             reportData = reportService.generatePdfReport(startDate, endDate);
             contentType = MediaType.APPLICATION_PDF_VALUE;
-            fileName = "report.pdf";
+            fileName = "Raport_" + dateSuffix + ".pdf";
         } else if ("excel".equalsIgnoreCase(format)) {
             reportData = reportService.generateExcelReport(startDate, endDate);
             contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            fileName = "report.xlsx";
+            fileName = "Raport_" + dateSuffix + ".xlsx";
         } else {
-            return ResponseEntity.badRequest().build();
+            // Dacă formatul nu este nici pdf, nici excel, returnăm o eroare
+            return ResponseEntity.badRequest().body("Format invalid. Folosiți 'pdf' sau 'excel'.".getBytes());
         }
 
+        // Setăm antetele HTTP corecte pentru a forța descărcarea
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(reportData);
     }
+    
+    // Am eliminat celelalte endpoint-uri individuale (/sales, /stock, /users) pentru a simplifica.
+    // Acum totul se gestionează prin /general (pentru vizualizare JSON) și /download (pentru descărcare).
 }

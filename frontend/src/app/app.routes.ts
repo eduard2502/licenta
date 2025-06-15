@@ -25,12 +25,14 @@ import { UserOrderHistoryComponent } from './features/user-dashboard/user-order-
 import { SignupComponent } from './signup/signup.component';
 import { ReportsComponent } from './features/admin/reports/reports.component';
 
+
 // Guards pentru securizarea rutelor
 import { userGuard } from './auth/user.guard';
 import { adminGuard } from './auth/admin.guard';
 
 import { ShoppingCartComponent } from './features/shopping-cart/shopping-cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
+import { UserProductListComponent } from './features/products/user-product-list/user-product-list.component';
 
 export const routes: Routes = [
   // Pagina principala (default), publica
@@ -40,7 +42,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Autentificare' },
   
   // Rutele de detalii produs și catalog rămân publice
-  { path: 'products-list', component: ProductListComponent, title: 'Catalog Produse' }, // Ruta pentru tabelul vechi
+  { path: 'products-list', component: UserProductListComponent, title: 'Catalog Produse' }, // Ruta pentru tabelul vechi
   { path: 'products/:id', component: ProductDetailComponent, title: 'Detalii Produs' },
 
    // Ruta pentru coșul de cumpărături
