@@ -122,28 +122,33 @@ public class ProductService {
         productRepository.deleteById(id);
     }
     
-    private ProductDto mapToDto(Product product) {
-        ProductDto dto = new ProductDto();
-        dto.setId(product.getId());
-        dto.setName(product.getName());
-        dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
-        // MODIFICARE: Adăugăm stockQuantity în DTO-ul trimis către frontend
-        dto.setStockQuantity(product.getStockQuantity());
-        dto.setCategoryId(product.getCategory().getId());
-        dto.setCategoryName(product.getCategory().getName());
+    // Update the mapToDto method in ProductService to include review data:
 
-        if (product.getSpecifications() != null) {
-            dto.setSpecifications(product.getSpecifications().stream().map(specValue -> {
-                SpecificationDto specDto = new SpecificationDto();
-                specDto.setDefinitionId(specValue.getSpecificationDefinition().getId());
-                specDto.setName(specValue.getSpecificationDefinition().getName());
-                specDto.setValue(specValue.getValue());
-                return specDto;
-            }).collect(Collectors.toList()));
-        } else {
-            dto.setSpecifications(new ArrayList<>());
-        }
-        return dto;
+private ProductDto mapToDto(Product product) {
+    ProductDto dto = new ProductDto();
+    dto.setId(product.getId());
+    dto.setName(product.getName());
+    dto.setDescription(product.getDescription());
+    dto.setPrice(product.getPrice());
+    dto.setStockQuantity(product.getStockQuantity());
+    dto.setCategoryId(product.getCategory().getId());
+    dto.setCategoryName(product.getCategory().getName());
+    
+    // Add review data
+    dto.setAverageRating(product.calculateAverageRating());
+    dto.setReviewCount(product.getReviewCount());
+
+    if (product.getSpecifications() != null) {
+        dto.setSpecifications(product.getSpecifications().stream().map(specValue -> {
+            SpecificationDto specDto = new SpecificationDto();
+            specDto.setDefinitionId(specValue.getSpecificationDefinition().getId());
+            specDto.setName(specValue.getSpecificationDefinition().getName());
+            specDto.setValue(specValue.getValue());
+            return specDto;
+        }).collect(Collectors.toList()));
+    } else {
+        dto.setSpecifications(new ArrayList<>());
     }
+    return dto;
+}
 }

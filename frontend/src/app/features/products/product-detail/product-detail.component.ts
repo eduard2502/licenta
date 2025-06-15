@@ -16,6 +16,8 @@ import { ProductService } from '../product.service';
 import { AuthService } from '../../../auth/auth.service';
 import { CartService } from '../../shopping-cart/cart.service';
 import { AddToCartRequest } from '../../../shared/models/cart.model';
+import { ReviewListComponent } from '../../reviews/review-list/review-list.component';
+import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
 
 // Pipe custom pentru nl2br
 @Pipe({
@@ -46,7 +48,9 @@ export class Nl2brPipe implements PipeTransform {
     MatDividerModule,
     CurrencyPipe,
     TitleCasePipe,
-    Nl2brPipe
+    Nl2brPipe,
+    ReviewListComponent,
+    StarRatingComponent
   ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss']

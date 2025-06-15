@@ -10,6 +10,8 @@ export interface Product {
   categoryId: number;
   categoryName?: string;
   specifications?: SpecificationValue[];
+  averageRating?: number;
+  reviewCount?: number;
 }
 
 export type { SpecificationValue };

@@ -32,4 +32,6 @@ public class ProductDto {
     private String categoryName;
 
     private List<SpecificationDto> specifications;
+    private Double averageRating;
+    private Integer reviewCount;
 }

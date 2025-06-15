@@ -91,6 +91,13 @@ public class SecurityConfig {
                 // Permite fișierele statice pentru frontend
                 .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.jpg", "/*.webmanifest", "/assets/**").permitAll()
 
+                // Public access to view reviews
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/reviews/product/**")).permitAll()
+                // Authenticated users can create/update/delete reviews
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/reviews")).authenticated()
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/reviews/**")).authenticated()
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/reviews/**")).authenticated()
+
                 // -- FINAL: REGULA GENERALĂ (TREBUIE SĂ FIE ULTIMA) --
                 .anyRequest().authenticated()
             );

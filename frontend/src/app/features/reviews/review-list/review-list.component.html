@@ -1,0 +1,91 @@
+<!-- frontend/src/app/features/reviews/review-list/review-list.component.html -->
+<div class="review-section">
+  <h3 class="section-title">Recenzii și Evaluări</h3>
+
+  <!-- Review Summary -->
+  <div class="review-summary" *ngIf="summary">
+    <mat-card>
+      <mat-card-content>
+        <div class="summary-content">
+          <div class="average-rating">
+            <div class="rating-number">{{ summary.averageRating.toFixed(1) }}</div>
+            <app-star-rating 
+              [rating]="summary.averageRating" 
+              [readonly]="true"
+              [showHalf]="true">
+            </app-star-rating>
+            <div class="total-reviews">{{ summary.totalReviews }} recenzii</div>
+          </div>
+          
+          <div class="rating-distribution">
+            <div *ngFor="let rating of [5, 4, 3, 2, 1]" class="rating-bar">
+              <span class="rating-label">{{ rating }} stele</span>
+              <div class="bar-container">
+                <div class="bar-fill" [style.width.%]="getRatingPercentage(rating)"></div>
+              </div>
+              <span class="rating-count">{{ summary.ratingDistribution[rating] || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Write Review Button -->
+  <div class="review-actions" *ngIf="authService.isLoggedIn()">
+    <button mat-raised-button color="primary" (click)="openReviewDialog()">
+      <mat-icon>{{ myReview ? 'edit' : 'rate_review' }}</mat-icon>
+      {{ myReview ? 'Editează recenzia ta' : 'Scrie o recenzie' }}
+    </button>
+  </div>
+
+  <div class="login-prompt" *ngIf="!authService.isLoggedIn()">
+    <p>Trebuie să fii autentificat pentru a scrie o recenzie.</p>
+    <button mat-stroked-button color="primary" routerLink="/login">Autentifică-te</button>
+  </div>
+
+  <!-- Reviews List -->
+  <div class="reviews-list">
+    <div *ngIf="isLoading" class="loading-indicator">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && reviews.length === 0" class="no-reviews">
+      <p>Nu există recenzii pentru acest produs încă.</p>
+      <p *ngIf="authService.isLoggedIn()">Fii primul care scrie o recenzie!</p>
+    </div>
+
+    <mat-card *ngFor="let review of reviews" class="review-card">
+      <mat-card-header>
+        <div class="review-header">
+          <div class="review-info">
+            <h4 class="reviewer-name">{{ review.username }}</h4>
+            <app-star-rating [rating]="review.rating" [readonly]="true"></app-star-rating>
+            <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+          </div>
+          <div class="review-actions" *ngIf="canEditReview(review)">
+            <button mat-icon-button (click)="openReviewDialog()" *ngIf="review.userId === authService.getCurrentUser()?.id">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteReview(review)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <h5 class="review-title" *ngIf="review.title">{{ review.title }}</h5>
+        <p class="review-comment">{{ review.comment }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Pagination -->
+    <mat-paginator *ngIf="totalReviews > pageSize"
+      [length]="totalReviews"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 25]"
+      [pageIndex]="pageIndex"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  </div>
+</div>

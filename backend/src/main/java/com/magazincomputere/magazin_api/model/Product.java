@@ -8,11 +8,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -60,4 +63,29 @@ public class Product {
     public Product(Long id) {
         this.id = id;
     }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+@ToString.Exclude
+@EqualsAndHashCode.Exclude
+private List<Review> reviews = new ArrayList<>();
+
+@Transient
+private Double averageRating;
+
+@Transient
+private Integer reviewCount;
+
+// Add a method to calculate average rating
+public Double calculateAverageRating() {
+    if (reviews == null || reviews.isEmpty()) {
+        return 0.0;
+    }
+    return reviews.stream()
+        .mapToInt(Review::getRating)
+        .average()
+        .orElse(0.0);
+}
+
+public Integer getReviewCount() {
+    return reviews != null ? reviews.size() : 0;
+}
 }
