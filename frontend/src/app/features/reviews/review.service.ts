@@ -37,4 +37,7 @@ export class ReviewService {
   getMyReviewForProduct(productId: number): Observable<Review | null> {
     return this.http.get<Review | null>(`${this.apiUrl}/product/${productId}/my-review`);
   }
+  getUserReviews(): Observable<Review[]> {
+  return this.http.get<Review[]>(`${this.apiUrl}/user/my-reviews`);
+}
 }

@@ -1,0 +1,341 @@
+// frontend/src/app/features/user-profile/user-profile.component.scss
+.user-profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: calc(100vh - 64px);
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+
+  h1 {
+    margin: 0;
+    color: #448AFF;
+    font-size: 2em;
+  }
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #aaa;
+
+  p {
+    margin-top: 20px;
+  }
+}
+
+::ng-deep .mat-mdc-tab-group {
+  background-color: transparent;
+
+  .mat-mdc-tab-labels {
+    background-color: #1e1e1e;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .mat-mdc-tab-label {
+    color: #aaa;
+    font-weight: 500;
+
+    &.mat-mdc-tab-label-active {
+      color: #448AFF;
+    }
+  }
+
+  .mat-ink-bar {
+    background-color: #448AFF;
+  }
+}
+
+.tab-content {
+  padding: 24px 0;
+}
+
+// Profile Card Styles
+.profile-card {
+  background-color: #1e1e1e;
+  
+  mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .profile-avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .avatar-placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #448AFF;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #448AFF;
+      }
+    }
+
+    .profile-header-info {
+      mat-card-title {
+        font-size: 1.5em;
+        color: #fff;
+        margin-bottom: 4px;
+      }
+
+      mat-card-subtitle {
+        color: #aaa;
+      }
+    }
+  }
+}
+
+.profile-section {
+  margin-bottom: 32px;
+
+  h3 {
+    color: #448AFF;
+    margin-bottom: 16px;
+    font-size: 1.2em;
+  }
+
+  mat-divider {
+    margin-bottom: 24px;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.preferences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+
+  .preference-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+
+    mat-icon {
+      color: #448AFF;
+      margin-top: 4px;
+    }
+
+    h4 {
+      margin: 0 0 4px 0;
+      color: #fff;
+      font-size: 1em;
+    }
+
+    p {
+      margin: 0;
+      color: #aaa;
+      font-size: 0.9em;
+
+      strong {
+        color: #4CAF50;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #333;
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Reviews Section Styles
+.reviews-summary-card {
+  background-color: #1e1e1e;
+  margin-bottom: 24px;
+
+  .reviews-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 0;
+
+    .stat-item {
+      text-align: center;
+
+      h3 {
+        margin: 0 0 8px 0;
+        font-size: 2.5em;
+        color: #448AFF;
+        font-weight: 500;
+      }
+
+      p {
+        margin: 0 0 8px 0;
+        color: #aaa;
+        font-size: 1.1em;
+      }
+    }
+  }
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+
+  mat-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    color: #555;
+  }
+
+  p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+}
+
+.reviews-list {
+  display: grid;
+  gap: 16px;
+}
+
+.review-card {
+  background-color: #1e1e1e;
+  
+  mat-card-header {
+    mat-card-title {
+      color: #448AFF;
+      font-size: 1.1em;
+    }
+
+    mat-card-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 8px;
+
+      .review-date {
+        color: #aaa;
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  mat-card-content {
+    .review-title {
+      margin: 16px 0 8px 0;
+      color: #fff;
+      font-size: 1.05em;
+    }
+
+    .review-comment {
+      color: #ccc;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  mat-card-actions {
+    button {
+      mat-icon {
+        margin-right: 4px;
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.orders-placeholder {
+  text-align: center;
+  padding: 80px 20px;
+  color: #aaa;
+
+  mat-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    color: #555;
+  }
+
+  p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+  }
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preferences-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reviews-stats {
+    flex-direction: column;
+    gap: 24px;
+  }
+}

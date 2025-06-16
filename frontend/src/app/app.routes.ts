@@ -33,6 +33,7 @@ import { adminGuard } from './auth/admin.guard';
 import { ShoppingCartComponent } from './features/shopping-cart/shopping-cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { UserProductListComponent } from './features/products/user-product-list/user-product-list.component';
+import { UserProfileComponent } from './features/user-profile/user-profile.component';
 
 export const routes: Routes = [
   // Pagina principala (default), publica
@@ -54,7 +55,7 @@ export const routes: Routes = [
   { path: 'my-orders', component: UserOrderHistoryComponent, canActivate: [userGuard], title: 'Comenzile Mele' },
   // { path: 'my-profile', component: UserProfileComponent, canActivate: [userGuard], title: 'Profilul Meu' },
   { path: 'signup', component: SignupComponent, title: 'Înregistrare' },
- 
+ { path: 'my-profile', component: UserProfileComponent, canActivate: [userGuard], title: 'Profilul Meu' },
 
   // Rute protejate pentru Administrator
   {
