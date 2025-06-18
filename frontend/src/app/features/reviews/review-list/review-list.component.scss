@@ -1,10 +1,8 @@
-// frontend/src/app/features/reviews/review-list/review-list.component.scss
 .review-section {
   margin-top: 40px;
   
   .section-title {
     font-size: 1.5em;
-    color: #448AFF;
     margin-bottom: 20px;
   }
 }
@@ -29,13 +27,12 @@
     .rating-number {
       font-size: 3em;
       font-weight: 500;
-      color: #448AFF;
       margin-bottom: 10px;
     }
     
     .total-reviews {
       margin-top: 10px;
-      color: #666;
+      opacity: 0.7;
     }
   }
   
@@ -50,11 +47,11 @@
       .rating-label {
         text-align: right;
         font-size: 0.9em;
-        color: #666;
+        opacity: 0.7;
       }
       
       .bar-container {
-        background-color: #e0e0e0;
+        background-color: rgba(0,0,0,0.1);
         height: 8px;
         border-radius: 4px;
         overflow: hidden;
@@ -69,7 +66,7 @@
       .rating-count {
         text-align: left;
         font-size: 0.9em;
-        color: #666;
+        opacity: 0.7;
       }
     }
   }
@@ -83,13 +80,13 @@
 .login-prompt {
   text-align: center;
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: rgba(0,0,0,0.02);
   border-radius: 8px;
   margin: 20px 0;
   
   p {
     margin-bottom: 10px;
-    color: #666;
+    opacity: 0.7;
   }
 }
 
@@ -101,7 +98,7 @@
 .no-reviews {
   text-align: center;
   padding: 40px;
-  color: #666;
+  opacity: 0.7;
   
   p {
     margin-bottom: 10px;
@@ -134,7 +131,7 @@
       
       .review-date {
         font-size: 0.85em;
-        color: #666;
+        opacity: 0.7;
       }
     }
   }
@@ -147,6 +144,6 @@
   
   .review-comment {
     line-height: 1.6;
-    color: #333;
+    opacity: 0.87;
   }
 }

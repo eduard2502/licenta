@@ -1,9 +1,7 @@
-// frontend/src/app/features/products/user-product-list/user-product-list.component.scss
 .user-product-list-container {
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  background-color: #121212;
   min-height: calc(100vh - 64px);
 }
 
@@ -17,7 +15,6 @@
 
   h2 {
     margin: 0;
-    color: #448AFF;
     font-size: 2em;
     flex-shrink: 0;
   }
@@ -49,15 +46,10 @@
 .no-data {
   text-align: center;
   padding: 40px 20px;
-  color: #ccc;
 
   mat-spinner {
     margin: 0 auto 20px;
   }
-}
-
-.error-message {
-  color: #f44336;
 }
 
 .products-grid {
@@ -68,8 +60,6 @@
 }
 
 .product-card {
-  background-color: #1e1e1e;
-  border: 1px solid #333;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -77,24 +67,23 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(68, 138, 255, 0.15);
-    border-color: #448AFF;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   }
 
   .product-image {
     height: 200px;
-    background-color: #121212;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border-bottom: 1px solid #333;
+    background: rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
 
     mat-icon {
       font-size: 80px;
       width: 80px;
       height: 80px;
-      color: #555;
+      opacity: 0.3;
     }
   }
 
@@ -103,13 +92,12 @@
     padding: 16px;
 
     mat-card-title {
-      color: #448AFF;
       font-size: 1.2em;
       margin-bottom: 4px;
     }
 
     mat-card-subtitle {
-      color: #aaa;
+      opacity: 0.7;
       font-size: 0.9em;
     }
   }
@@ -127,7 +115,6 @@
       .price {
         font-size: 1.5em;
         font-weight: 500;
-        color: #4CAF50;
         margin: 0;
       }
 
@@ -137,13 +124,13 @@
         border-radius: 4px;
         
         &.in-stock {
-          color: #4CAF50;
           background-color: rgba(76, 175, 80, 0.1);
+          color: #4CAF50;
         }
         
         &.out-of-stock {
-          color: #f44336;
           background-color: rgba(244, 67, 54, 0.1);
+          color: #f44336;
         }
       }
     }
@@ -151,9 +138,9 @@
     .product-description {
       p {
         margin: 0;
-        color: #ccc;
         font-size: 0.9em;
         line-height: 1.5;
+        opacity: 0.8;
       }
     }
   }
@@ -163,7 +150,7 @@
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    border-top: 1px solid #333;
+    border-top: 1px solid rgba(0,0,0,0.1);
 
     button {
       flex: 1;
@@ -175,42 +162,9 @@
   display: flex;
   justify-content: center;
   margin-top: 30px;
-
-  ::ng-deep .mat-mdc-paginator {
-    background-color: #1e1e1e;
-    color: #ccc;
-  }
 }
 
-// Dark theme adjustments
-::ng-deep {
-  .mat-mdc-form-field {
-    .mat-mdc-text-field-wrapper {
-      background-color: #1e1e1e !important;
-    }
-    
-    .mat-mdc-form-field-outline {
-      color: #666 !important;
-    }
-    
-    .mat-mdc-form-field-outline-thick {
-      color: #448AFF !important;
-    }
-  }
-
-  .mat-mdc-form-field-type-mat-input.mat-focused .mat-mdc-form-field-outline-thick {
-    color: #448AFF !important;
-  }
-
-  .mat-mdc-paginator {
-    .mat-mdc-paginator-page-size-label,
-    .mat-mdc-paginator-range-label {
-      color: #ccc;
-    }
-  }
-}
-
-// Responsive styles
+/* Responsive styles */
 @media (max-width: 1024px) {
   .header {
     flex-direction: column;

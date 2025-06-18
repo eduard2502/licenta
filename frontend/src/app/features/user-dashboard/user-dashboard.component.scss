@@ -1,6 +1,3 @@
-/* src/app/features/user-dashboard/user-dashboard.component.scss */
-
-// Stiluri pentru containerul principal și meniul lateral
 .user-dashboard-container {
   height: calc(100vh - 64px); 
   display: flex;
@@ -8,18 +5,17 @@
 
 .user-sidenav {
   width: 240px;
-  background-color: #1e1e1e; // Fundal mai închis pentru meniu
-  border-right: 1px solid #444;
+  border-right: 1px solid rgba(0,0,0,0.12);
 
   .sidenav-header {
     padding: 16px;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
     display: flex;
     align-items: center;
     gap: 10px;
 
     mat-icon {
-      color: #4CAF50; // Accent verde
+      color: var(--mdc-theme-primary, #673ab7);
     }
     h3 {
       margin: 0;
@@ -28,34 +24,33 @@
   }
 
   a[mat-list-item] {
-    color: #ccc;
     border-left: 4px solid transparent;
     transition: background-color 0.3s, border-left-color 0.3s;
-    &:hover { background-color: #2a2a2a; }
+    &:hover { 
+      background-color: rgba(0,0,0,0.04); 
+    }
     &.active-link {
-      background-color: rgba(76, 175, 80, 0.1);
-      color: #4CAF50;
-      border-left-color: #4CAF50;
+      background-color: rgba(103, 58, 183, 0.1);
+      border-left-color: var(--mdc-theme-primary, #673ab7);
       font-weight: 500;
-      mat-icon { color: #4CAF50; }
+      mat-icon { 
+        color: var(--mdc-theme-primary, #673ab7); 
+      }
     }
   }
 }
 
-// Resetează padding-ul default
 :host ::ng-deep .mat-drawer-content {
   padding: 0;
   overflow: auto;
 }
 
-// Stiluri pentru conținutul principal nou
 .user-content {
-  background-color: #121212;
-  color: #e0e0e0;
+  flex: 1;
+  overflow: auto;
 }
 
 .section-title {
-  color: #4CAF50;
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 40px;
@@ -68,18 +63,19 @@
   padding: 40px;
 }
 
-/* === Secțiunea Hero === */
+/* Hero Section */
 .hero-section {
   min-height: 60vh;
   padding: 40px;
   display: flex;
   align-items: center;
   position: relative;
+  background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.1) 100%);
   
   .hero-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to right, #121212 30%, rgba(18, 18, 18, 0.7) 60%, rgba(18, 18, 18, 0) 100%);
+    background: linear-gradient(to right, rgba(255,255,255,0.3) 30%, rgba(255,255,255,0.1) 60%, transparent 100%);
   }
   
   .hero-content {
@@ -91,20 +87,25 @@
     
     .text-content {
       max-width: 50%;
-      h1 { font-size: 3rem; font-weight: bold; color: white; }
-      p { font-size: 1.1rem; line-height: 1.6; margin: 20px 0 30px; }
+      h1 { 
+        font-size: 3rem; 
+        font-weight: bold; 
+      }
+      p { 
+        font-size: 1.1rem; 
+        line-height: 1.6; 
+        margin: 20px 0 30px; 
+      }
       button {
         padding: 10px 30px;
         font-size: 1rem;
-        background-color: #4CAF50;
-        color: #121212;
         font-weight: bold;
       }
     }
   }
 }
 
-/* === Secțiunea de Produse === */
+/* Products Section */
 .selection-section {
   padding: 60px 40px;
 }
@@ -116,25 +117,26 @@
 }
 
 .product-card {
-  background-color: #1e1e1e;
-  color: #fff;
-  border: 1px solid #4CAF50;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
 
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.25);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   }
 
   .product-image-container {
     height: 200px;
-    background-color: #121212;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #555;
-    mat-icon { font-size: 60px; width: 60px; height: 60px; }
+    background: rgba(0,0,0,0.05);
+    mat-icon { 
+      font-size: 60px; 
+      width: 60px; 
+      height: 60px; 
+      opacity: 0.3;
+    }
   }
 
   mat-card-header {
@@ -143,26 +145,28 @@
   }
   
   mat-card-title {
-    color: #4CAF50;
     font-size: 1.1rem;
   }
   
   mat-card-content {
     text-align: center;
-    .product-price { font-size: 1.1rem; font-weight: bold; margin-top: 5px; }
+    .product-price { 
+      font-size: 1.1rem; 
+      font-weight: bold; 
+      margin-top: 5px; 
+    }
   }
 
   mat-card-actions {
     justify-content: center;
     padding: 0 16px 16px;
-    button { border: 1px solid #4CAF50; color: #4CAF50; }
   }
 }
 
-/* === Secțiunea Social Media === */
+/* Social Section */
 .social-section {
   padding: 60px 40px;
-  background-color: #1a1a1a;
+  background-color: rgba(0,0,0,0.05);
   .social-icons {
     display: flex;
     justify-content: center;
@@ -170,17 +174,18 @@
     .social-icon-box {
       width: 120px;
       height: 120px;
-      background-color: #121212;
-      border: 2px solid #4CAF50;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 4rem;
       font-weight: bold;
-      color: #4CAF50;
       text-decoration: none;
       transition: background-color 0.2s;
-      &:hover { background-color: #2a2a2a; }
+      border: 2px solid currentColor;
+      border-radius: 8px;
+      &:hover { 
+        background-color: rgba(0,0,0,0.05); 
+      }
     }
   }
 }

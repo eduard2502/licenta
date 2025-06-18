@@ -1,9 +1,8 @@
-/* src/app/app.component.scss */
-
-// Am mutat stilurile pentru .app-toolbar în fișierul global styles.scss
-// pentru a ne asigura că suprascriu corect tema Angular Material.
-
 .app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  
   .app-title {
     margin-left: 8px;
     cursor: pointer;
@@ -17,4 +16,8 @@
   button[mat-button], button[mat-stroked-button], button[mat-icon-button] {
     margin: 0 4px;
   }
+}
+
+.main-content {
+  min-height: calc(100vh - 64px);
 }

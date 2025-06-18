@@ -1,21 +1,20 @@
-// src/app/features/home/home-page/home-page.component.scss
 :host {
   display: block;
-  background-color: #121212;
-  color: #e0e0e0;
+}
+
+.home-container {
+  width: 100%;
 }
 
 .section-title {
-  color: #448AFF;
   font-size: 2.5rem;
   font-weight: bold;
   text-align: center;
   margin-bottom: 40px;
 }
 
-/* Stiluri Hero */
+/* Hero Section */
 .hero-section {
-  padding-top: 64px; // Compensează pentru înălțimea toolbar-ului
   min-height: 80vh;
   padding: 40px;
   display: flex;
@@ -23,44 +22,52 @@
   justify-content: center;
   position: relative;
   text-align: center;
-  // Aici vei pune imaginea de fundal mai târziu
-  background-color: #151515; // Culoare de rezervă
+  background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 100%);
 
   .hero-overlay {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to top, #121212 5%, rgba(18, 18, 18, 0.7) 60%, rgba(18, 18, 18, 0) 100%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(255,255,255,0.1) 5%, transparent 60%);
   }
   
   .hero-content {
     position: relative;
+    z-index: 1;
+    
     h1 {
       font-size: 3.5rem;
-      color: white;
-      // MODIFICAT: Adăugare umbră pentru lizibilitate
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+      font-weight: bold;
+      margin-bottom: 1rem;
     }
+    
     p {
       font-size: 1.2rem;
       margin: 20px 0 30px;
-      // MODIFICAT: Adăugare umbră pentru lizibilitate
-      text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.8);
+      opacity: 0.9;
     }
+    
     button {
       padding: 12px 35px;
       font-size: 1.1rem;
-      background-color: #448AFF;
-      color: white;
       font-weight: bold;
     }
   }
 }
 
-/* Restul stilurilor rămân la fel ca în răspunsul anterior */
+/* Products Section */
 .selection-section {
   padding: 60px 40px;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
 }
 
 .product-grid {
@@ -70,52 +77,76 @@
 }
 
 .product-card {
-  background-color: #1e1e1e;
-  border: 1px solid #448AFF;
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(68, 138, 255, 0.25);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   }
+  
   .product-image-container {
     height: 220px;
-    background-color: #121212;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #555;
-    mat-icon { font-size: 70px; width: 70px; height: 70px; }
+    background: rgba(0,0,0,0.05);
+    
+    mat-icon {
+      font-size: 70px;
+      width: 70px;
+      height: 70px;
+      opacity: 0.3;
+    }
   }
-  mat-card-header { justify-content: center; text-align: center; }
-  mat-card-title { color: #448AFF; }
-  mat-card-content { text-align: center; }
-  mat-card-actions { justify-content: center; padding-bottom: 16px; }
+  
+  mat-card-header {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  mat-card-content {
+    text-align: center;
+    
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin: 10px 0;
+    }
+  }
+  
+  mat-card-actions {
+    justify-content: center;
+    padding-bottom: 16px;
+  }
 }
 
+/* Social Section */
 .social-section {
   padding: 60px 40px;
-  background-color: #1a1a1a;
+  background: rgba(0,0,0,0.05);
+  
   .social-icons {
     display: flex;
     justify-content: center;
     gap: 20px;
+    
     .social-icon-box {
       width: 120px;
       height: 120px;
-      background-color: #121212;
-      border: 2px solid #448AFF;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 4rem;
       font-weight: bold;
-      color: #448AFF;
+      text-decoration: none;
+      border: 2px solid currentColor;
+      border-radius: 8px;
+      transition: transform 0.2s;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
     }
   }
-}
-
-.loading-indicator {
-  display: flex;
-  justify-content: center;
-  padding: 40px;
 }

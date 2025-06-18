@@ -1,7 +1,7 @@
 // frontend/src/app/features/user-profile/user-profile.component.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 
 import { AuthService } from '../../auth/auth.service';
 import { ReviewService } from '../reviews/review.service';
@@ -60,6 +61,7 @@ export class UserProfileComponent implements OnInit {
   private userService = inject(UserAdminService);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.initializeForm();
@@ -77,43 +79,49 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  loadUserProfile(): void {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      this.userService.getUserById(currentUser.id).subscribe({
-        next: (user) => {
-          this.user = user;
-          this.profileForm.patchValue({
-            username: user.username,
-            email: user.email
-          });
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.snackBar.open('Eroare la încărcarea profilului', 'Închide', { duration: 3000 });
-          console.error('Error loading profile:', err);
-        }
-      });
-    }
-  }
-
-  loadUserReviews(): void {
-    this.isLoadingReviews = true;
-    // We need to add a method in review service to get reviews by user
-    // For now, we'll simulate this
-    this.reviewService.getUserReviews().subscribe({
-      next: (reviews) => {
-        this.userReviews = reviews;
-        this.calculateReviewStats();
-        this.isLoadingReviews = false;
+ loadUserProfile(): void {
+  const currentUser = this.authService.getCurrentUser();
+  if (currentUser && currentUser.id) {
+    this.isLoading = true;
+    // Use the current user's ID instead of hardcoded value
+    this.userService.getUserById(currentUser.id).subscribe({
+      next: (user) => {
+        this.user = user;
+        this.profileForm.patchValue({
+          username: user.username,
+          email: user.email
+        });
+        this.isLoading = false;
       },
       error: (err) => {
-        this.isLoadingReviews = false;
-        console.error('Error loading reviews:', err);
+        this.isLoading = false;
+        this.snackBar.open('Eroare la încărcarea profilului', 'Închide', { duration: 3000 });
+        console.error('Error loading profile:', err);
       }
     });
+  } else {
+    // If no current user, redirect to login
+    this.router.navigate(['/login']);
   }
+}
+
+ loadUserReviews(): void {
+  this.isLoadingReviews = true;
+  this.reviewService.getUserReviews().subscribe({
+    next: (reviews) => {
+      this.userReviews = reviews;
+      this.calculateReviewStats();
+      this.isLoadingReviews = false;
+    },
+    error: (err) => {
+      this.isLoadingReviews = false;
+      // Don't break the entire page if reviews fail to load
+      console.error('Error loading reviews:', err);
+      this.userReviews = []; // Set empty array as fallback
+      this.calculateReviewStats();
+    }
+  });
+}
 
   calculateReviewStats(): void {
     this.totalReviews = this.userReviews.length;

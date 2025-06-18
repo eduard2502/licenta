@@ -1,4 +1,3 @@
-// frontend/src/app/features/checkout/checkout.component.scss
 .checkout-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -7,7 +6,6 @@
 
 .page-title {
   margin-bottom: 30px;
-  color: #448AFF;
   font-size: 2em;
 }
 
@@ -42,16 +40,15 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #448AFF;
         
         mat-icon {
-          color: #448AFF;
+          opacity: 0.7;
         }
       }
       
       mat-card-subtitle {
         margin-top: 5px;
-        color: #666;
+        opacity: 0.7;
       }
     }
   }
@@ -92,27 +89,27 @@
       display: flex;
       align-items: center;
       padding: 15px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid rgba(0,0,0,0.12);
       border-radius: 8px;
       
       &:hover:not([disabled]) {
-        background: #f5f5f5;
+        background: rgba(0,0,0,0.04);
       }
       
       &.mat-mdc-radio-checked {
-        border-color: #448AFF;
-        background: rgba(68, 138, 255, 0.05);
+        border-color: var(--mdc-theme-primary, #673ab7);
+        background: rgba(103, 58, 183, 0.08);
       }
       
       mat-icon {
         margin-right: 10px;
-        color: #666;
+        opacity: 0.7;
       }
       
       .payment-note {
         display: block;
         font-size: 0.85em;
-        color: #666;
+        opacity: 0.7;
         margin-top: 5px;
         margin-left: 34px;
       }
@@ -128,7 +125,7 @@
       font-size: 0.95em;
       
       a {
-        color: #448AFF;
+        color: var(--mdc-theme-primary, #673ab7);
         text-decoration: none;
         
         &:hover {
@@ -143,18 +140,9 @@
   position: sticky;
   top: 80px;
   
-  mat-card {
-    background: #1e1e1e;
-    color: #fff;
-  }
-  
   mat-card-header {
     padding-bottom: 16px;
-    border-bottom: 1px solid #333;
-    
-    mat-card-title {
-      color: #448AFF;
-    }
+    border-bottom: 1px solid rgba(0,0,0,0.12);
   }
   
   .summary-items {
@@ -167,13 +155,12 @@
       font-size: 0.9em;
       
       .item-name {
-        color: #ccc;
         flex: 1;
         margin-right: 10px;
+        opacity: 0.8;
       }
       
       .item-price {
-        color: #fff;
         white-space: nowrap;
       }
     }
@@ -181,7 +168,6 @@
   
   mat-divider {
     margin: 16px 0;
-    background-color: #333;
   }
   
   .summary-totals {
@@ -195,10 +181,9 @@
       &.total {
         margin-top: 16px;
         padding-top: 16px;
-        border-top: 1px solid #333;
+        border-top: 1px solid rgba(0,0,0,0.12);
         font-size: 1.2em;
         font-weight: 500;
-        color: #448AFF;
       }
       
       .free-shipping {
@@ -214,18 +199,16 @@
     justify-content: center;
     gap: 8px;
     padding: 16px;
-    background: rgba(68, 138, 255, 0.1);
+    background: rgba(103, 58, 183, 0.08);
     border-radius: 4px;
     margin-top: 16px;
     
     mat-icon {
-      color: #448AFF;
       font-size: 20px;
     }
     
     span {
       font-size: 0.9em;
-      color: #448AFF;
     }
   }
   

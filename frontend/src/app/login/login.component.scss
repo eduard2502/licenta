@@ -1,19 +1,16 @@
-// src/app/login/login.component.scss
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 128px); 
   padding: 20px;
-  background-color: #f5f5f5;
 }
 
 .login-card {
   width: 100%;
   max-width: 400px;
   padding: 20px;
-  background-color: #1e1e1e; // Fundal mai închis pentru card
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
 }
 
@@ -22,11 +19,10 @@ mat-card-header {
   padding-bottom: 20px;
   mat-card-title {
     font-size: 1.8em;
-    color: #448AFF; // MODIFICAT: Albastru accent
   }
   mat-card-subtitle {
     font-size: 1em;
-    color: #aaa;
+    opacity: 0.7;
   }
 }
 
@@ -52,21 +48,20 @@ mat-card-header {
   }
 }
 
-// Scoate align="center" din HTML și folosește CSS
 .login-card-actions-center {
-  display: flex; // Adaugă flex pentru a putea centra
-  justify-content: center; // Centrează conținutul pe orizontală
+  display: flex;
+  justify-content: center;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid rgba(0,0,0,0.12);
 }
 
 .signup-link {
-  text-align: center; // Redundant dacă .login-card-actions-center este flex și centrează
+  text-align: center;
   font-size: 0.9em;
-  color: #555;
+  opacity: 0.7;
   a {
-    color: #448AFF; // MODIFICAT: Albastru accent
+    color: var(--mdc-theme-primary, #673ab7);
     text-decoration: none;
     font-weight: 500;
     &:hover {

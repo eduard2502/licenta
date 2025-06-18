@@ -1,4 +1,3 @@
-// src/app/features/products/product-form/product-form.component.scss
 .admin-product-form-container {
   padding: 20px;
   max-width: 800px;
@@ -31,44 +30,7 @@ mat-card-header {
   min-height: 200px;
   p {
     margin-top: 10px;
-    color: #757575;
-  }
-}
-
-.image-upload-section {
-  margin-top: 16px;
-  margin-bottom: 16px;
-  .image-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  input[type="file"] {
-    margin-bottom: 10px;
-    display: block; // Asigură că ocupă lățimea necesară
-  }
-  .image-preview-container {
-    margin-top: 10px;
-    position: relative;
-    display: inline-block;
-    border: 1px solid #eee;
-    padding: 5px;
-    border-radius: 4px;
-    background-color: #f9f9f9; // Un fundal deschis pentru previzualizare
-  }
-  .image-preview {
-    max-width: 200px;
-    max-height: 200px;
-    display: block;
-    border-radius: 4px;
-  }
-  button[mat-icon-button] {
-    position: absolute;
-    top: -15px; // Ajustează pentru o poziționare mai bună
-    right: -15px;
-    background-color: white; // Asigură vizibilitatea pe imagine
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2); // O umbră subtilă
+    opacity: 0.7;
   }
 }
 
@@ -76,25 +38,24 @@ mat-card-header {
   margin-top: 20px;
   margin-bottom: 20px;
   padding: 16px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(0,0,0,0.12);
   border-radius: 8px;
-  background-color: #f9f9f9;
-
+  background-color: rgba(0,0,0,0.02);
 
   h3 {
-    margin-top:0;
+    margin-top: 0;
     margin-bottom: 16px;
     font-size: 1.1em;
-    color: rgba(0,0,0,0.77);
+    opacity: 0.87;
   }
+  
   .specification-item {
     display: flex;
-    align-items: flex-start; // Aliniază la început pentru a gestiona erorile
+    align-items: flex-start;
     gap: 10px;
     margin-bottom: 12px;
     padding-bottom: 12px;
-    border-bottom: 1px dotted #ccc;
-
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
 
     &:last-child {
       margin-bottom: 0;
@@ -110,9 +71,10 @@ mat-card-header {
     }
     button[mat-icon-button] {
       flex-shrink: 0;
-      margin-top: 8px; // Aliniază butonul mai bine cu câmpurile
+      margin-top: 8px;
     }
   }
+  
   .add-spec-button {
     margin-top: 10px;
     mat-icon {
@@ -122,18 +84,18 @@ mat-card-header {
 }
 
 .form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 24px;
-  button {
-    min-width: 120px;
-    mat-icon {
-      margin-right: 8px;
-    }
-  }
+ display: flex;
+ justify-content: flex-end;
+ gap: 10px;
+ margin-top: 24px;
+ button {
+   min-width: 120px;
+   mat-icon {
+     margin-right: 8px;
+   }
+ }
 }
 
 mat-error {
-  font-size: 0.85em;
+ font-size: 0.85em;
 }

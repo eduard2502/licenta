@@ -1,4 +1,3 @@
-// frontend/src/app/features/shopping-cart/shopping-cart.component.scss
 .shopping-cart-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -10,7 +9,6 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 30px;
-  color: #448AFF;
   
   mat-icon {
     font-size: 32px;
@@ -40,18 +38,17 @@
     font-size: 80px;
     width: 80px;
     height: 80px;
-    color: #666;
     margin: 0 auto 20px;
+    opacity: 0.3;
   }
   
   h2 {
     margin-bottom: 10px;
-    color: #333;
   }
   
   p {
-    color: #666;
     margin-bottom: 30px;
+    opacity: 0.7;
   }
 }
 
@@ -85,9 +82,9 @@
   grid-template-columns: 100px 1fr 120px 150px 50px;
   gap: 15px;
   padding: 20px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(0,0,0,0.12);
   border-radius: 8px;
-  background: #f9f9f9;
+  background: rgba(0,0,0,0.02);
   align-items: center;
   
   @media (max-width: 768px) {
@@ -107,8 +104,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border: 1px solid #e0e0e0;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.12);
     border-radius: 4px;
     overflow: hidden;
     
@@ -116,7 +113,7 @@
       font-size: 40px;
       width: 40px;
       height: 40px;
-      color: #999;
+      opacity: 0.3;
     }
     
     img {
@@ -130,13 +127,12 @@
     h3 {
       margin: 0 0 5px;
       font-size: 1.1em;
-      color: #333;
     }
     
     .item-description {
       margin: 0 0 5px;
       font-size: 0.9em;
-      color: #666;
+      opacity: 0.7;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -167,14 +163,13 @@
     .unit-price {
       margin: 0 0 5px;
       font-size: 0.9em;
-      color: #666;
+      opacity: 0.7;
     }
     
     .subtotal {
       margin: 0;
       font-size: 1.1em;
       font-weight: 500;
-      color: #448AFF;
     }
   }
 }
@@ -183,17 +178,8 @@
   position: sticky;
   top: 80px;
   
-  mat-card {
-    background: #1e1e1e;
-    color: #fff;
-  }
-  
   mat-card-header {
     padding-bottom: 16px;
-    
-    mat-card-title {
-      color: #448AFF;
-    }
   }
   
   .summary-row {
@@ -205,7 +191,6 @@
       margin-top: 16px;
       font-size: 1.2em;
       font-weight: 500;
-      color: #448AFF;
     }
     
     .free-shipping {
