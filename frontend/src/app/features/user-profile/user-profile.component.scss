@@ -1,4 +1,3 @@
-// frontend/src/app/features/user-profile/user-profile.component.scss
 .user-profile-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -14,7 +13,6 @@
 
   h1 {
     margin: 0;
-    color: #448AFF;
     font-size: 2em;
   }
 
@@ -31,7 +29,6 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  color: #aaa;
 
   p {
     margin-top: 20px;
@@ -41,22 +38,16 @@
 ::ng-deep .mat-mdc-tab-group {
   background-color: transparent;
 
-  .mat-mdc-tab-labels {
-    background-color: #1e1e1e;
-    border-radius: 8px 8px 0 0;
-  }
-
   .mat-mdc-tab-label {
-    color: #aaa;
     font-weight: 500;
 
     &.mat-mdc-tab-label-active {
-      color: #448AFF;
+      color: var(--mdc-theme-primary, #673ab7);
     }
   }
 
   .mat-ink-bar {
-    background-color: #448AFF;
+    background-color: var(--mdc-theme-primary, #673ab7);
   }
 }
 
@@ -66,7 +57,7 @@
 
 // Profile Card Styles
 .profile-card {
-  background-color: #1e1e1e;
+  // Remove dark background
   
   mat-card-header {
     display: flex;
@@ -84,29 +75,28 @@
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background-color: #2a2a2a;
+      background-color: rgba(0,0,0,0.1);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 3px solid #448AFF;
+      border: 3px solid var(--mdc-theme-primary, #673ab7);
 
       mat-icon {
         font-size: 48px;
         width: 48px;
         height: 48px;
-        color: #448AFF;
+        color: var(--mdc-theme-primary, #673ab7);
       }
     }
 
     .profile-header-info {
       mat-card-title {
         font-size: 1.5em;
-        color: #fff;
         margin-bottom: 4px;
       }
 
       mat-card-subtitle {
-        color: #aaa;
+        opacity: 0.7;
       }
     }
   }
@@ -116,7 +106,7 @@
   margin-bottom: 32px;
 
   h3 {
-    color: #448AFF;
+    color: var(--mdc-theme-primary, #673ab7);
     margin-bottom: 16px;
     font-size: 1.2em;
   }
@@ -148,24 +138,23 @@
     align-items: flex-start;
     gap: 16px;
     padding: 16px;
-    background-color: #2a2a2a;
+    background-color: rgba(0,0,0,0.04);
     border-radius: 8px;
 
     mat-icon {
-      color: #448AFF;
+      color: var(--mdc-theme-primary, #673ab7);
       margin-top: 4px;
     }
 
     h4 {
       margin: 0 0 4px 0;
-      color: #fff;
       font-size: 1em;
     }
 
     p {
       margin: 0;
-      color: #aaa;
       font-size: 0.9em;
+      opacity: 0.7;
 
       strong {
         color: #4CAF50;
@@ -180,7 +169,7 @@
   gap: 12px;
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #333;
+  border-top: 1px solid rgba(0,0,0,0.12);
 
   button {
     mat-icon {
@@ -191,7 +180,7 @@
 
 // Reviews Section Styles
 .reviews-summary-card {
-  background-color: #1e1e1e;
+  // Remove dark background
   margin-bottom: 24px;
 
   .reviews-stats {
@@ -206,14 +195,14 @@
       h3 {
         margin: 0 0 8px 0;
         font-size: 2.5em;
-        color: #448AFF;
+        color: var(--mdc-theme-primary, #673ab7);
         font-weight: 500;
       }
 
       p {
         margin: 0 0 8px 0;
-        color: #aaa;
         font-size: 1.1em;
+        opacity: 0.7;
       }
     }
   }
@@ -222,19 +211,19 @@
 .no-reviews {
   text-align: center;
   padding: 60px 20px;
-  color: #aaa;
 
   mat-icon {
     font-size: 80px;
     width: 80px;
     height: 80px;
     margin: 0 auto 20px;
-    color: #555;
+    opacity: 0.3;
   }
 
   p {
     font-size: 1.2em;
     margin-bottom: 20px;
+    opacity: 0.7;
   }
 }
 
@@ -244,11 +233,11 @@
 }
 
 .review-card {
-  background-color: #1e1e1e;
+  // Remove dark background
   
   mat-card-header {
     mat-card-title {
-      color: #448AFF;
+      color: var(--mdc-theme-primary, #673ab7);
       font-size: 1.1em;
     }
 
@@ -259,8 +248,8 @@
       margin-top: 8px;
 
       .review-date {
-        color: #aaa;
         font-size: 0.9em;
+        opacity: 0.7;
       }
     }
   }
@@ -268,14 +257,13 @@
   mat-card-content {
     .review-title {
       margin: 16px 0 8px 0;
-      color: #fff;
       font-size: 1.05em;
     }
 
     .review-comment {
-      color: #ccc;
       line-height: 1.6;
       margin: 0;
+      opacity: 0.87;
     }
   }
 
@@ -292,19 +280,19 @@
 .orders-placeholder {
   text-align: center;
   padding: 80px 20px;
-  color: #aaa;
 
   mat-icon {
     font-size: 80px;
     width: 80px;
     height: 80px;
     margin: 0 auto 20px;
-    color: #555;
+    opacity: 0.3;
   }
 
   p {
     font-size: 1.1em;
     margin-bottom: 20px;
+    opacity: 0.7;
   }
 
   button {

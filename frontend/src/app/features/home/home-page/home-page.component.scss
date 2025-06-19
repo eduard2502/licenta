@@ -22,7 +22,7 @@
   justify-content: center;
   position: relative;
   text-align: center;
-  background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 100%);
+  background: linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.1) 100%);
 
   .hero-overlay {
     position: absolute;
@@ -30,7 +30,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to top, rgba(255,255,255,0.1) 5%, transparent 60%);
+    background: linear-gradient(to top, rgba(255,255,255,0.05) 5%, transparent 60%);
   }
   
   .hero-content {
@@ -79,6 +79,7 @@
 .product-card {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  // Remove dark background - let Material theme handle it
   
   &:hover {
     transform: translateY(-5px);
@@ -124,7 +125,7 @@
 /* Social Section */
 .social-section {
   padding: 60px 40px;
-  background: rgba(0,0,0,0.05);
+  background: rgba(0,0,0,0.02);
   
   .social-icons {
     display: flex;

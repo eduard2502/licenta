@@ -15,10 +15,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-
 import { AuthService } from '../../auth/auth.service';
 import { ReviewService } from '../reviews/review.service';
-import { UserAdminService } from '../admin/services/user-admin.service';
+import { UserProfileService } from './user-profile.service'; // New service
 import { User } from '../../shared/models/user.model';
 import { Review } from '../../shared/models/review.model';
 import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
@@ -58,12 +57,18 @@ export class UserProfileComponent implements OnInit {
 
   private authService = inject(AuthService);
   private reviewService = inject(ReviewService);
-  private userService = inject(UserAdminService);
+  private userProfileService = inject(UserProfileService); // Use new service
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
   ngOnInit(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.snackBar.open('Sesiunea a expirat. Te rugăm să te autentifici din nou.', 'OK', { duration: 3000 });
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/my-profile' } });
+      return;
+    }
+    
     this.initializeForm();
     this.loadUserProfile();
     this.loadUserReviews();
@@ -73,18 +78,17 @@ export class UserProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       username: [{ value: '', disabled: true }],
       email: ['', [Validators.required, Validators.email]],
-      fullName: [''], // For future implementation
-      phone: [''], // For future implementation
-      address: [''] // For future implementation
+      fullName: [''],
+      phone: [''],
+      address: ['']
     });
   }
 
- loadUserProfile(): void {
-  const currentUser = this.authService.getCurrentUser();
-  if (currentUser && currentUser.id) {
+  loadUserProfile(): void {
     this.isLoading = true;
-    // Use the current user's ID instead of hardcoded value
-    this.userService.getUserById(currentUser.id).subscribe({
+    
+    // Use the new service to get profile data
+    this.userProfileService.getMyProfile().subscribe({
       next: (user) => {
         this.user = user;
         this.profileForm.patchValue({
@@ -95,33 +99,48 @@ export class UserProfileComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.snackBar.open('Eroare la încărcarea profilului', 'Închide', { duration: 3000 });
-        console.error('Error loading profile:', err);
+        
+        // Check if it's an authentication error
+        if (err.message.includes('Sesiunea a expirat')) {
+          this.snackBar.open(err.message, 'Login', { duration: 5000 })
+            .onAction().subscribe(() => {
+              this.router.navigate(['/login'], { queryParams: { returnUrl: '/my-profile' } });
+            });
+        } else {
+          // For other errors, use cached data if available
+          const cachedUser = this.authService.getCurrentUser();
+          if (cachedUser) {
+            this.user = cachedUser;
+            this.profileForm.patchValue({
+              username: cachedUser.username,
+              email: cachedUser.email
+            });
+            this.snackBar.open('Folosind datele din cache. Reconectează-te pentru date actualizate.', 'OK', { duration: 3000 });
+          } else {
+            this.snackBar.open(err.message, 'Închide', { duration: 5000 });
+            this.router.navigate(['/']);
+          }
+        }
       }
     });
-  } else {
-    // If no current user, redirect to login
-    this.router.navigate(['/login']);
   }
-}
 
- loadUserReviews(): void {
-  this.isLoadingReviews = true;
-  this.reviewService.getUserReviews().subscribe({
-    next: (reviews) => {
-      this.userReviews = reviews;
-      this.calculateReviewStats();
-      this.isLoadingReviews = false;
-    },
-    error: (err) => {
-      this.isLoadingReviews = false;
-      // Don't break the entire page if reviews fail to load
-      console.error('Error loading reviews:', err);
-      this.userReviews = []; // Set empty array as fallback
-      this.calculateReviewStats();
-    }
-  });
-}
+  loadUserReviews(): void {
+    this.isLoadingReviews = true;
+    this.reviewService.getUserReviews().subscribe({
+      next: (reviews) => {
+        this.userReviews = reviews;
+        this.calculateReviewStats();
+        this.isLoadingReviews = false;
+      },
+      error: (err) => {
+        this.isLoadingReviews = false;
+        console.error('Error loading reviews:', err);
+        this.userReviews = [];
+        this.calculateReviewStats();
+      }
+    });
+  }
 
   calculateReviewStats(): void {
     this.totalReviews = this.userReviews.length;
@@ -134,7 +153,6 @@ export class UserProfileComponent implements OnInit {
   toggleEditMode(): void {
     this.isEditMode = !this.isEditMode;
     if (!this.isEditMode) {
-      // Reset form when canceling
       this.loadUserProfile();
     }
   }
@@ -144,18 +162,17 @@ export class UserProfileComponent implements OnInit {
 
     const updatedData = {
       email: this.profileForm.get('email')?.value,
-      roles: this.user.roles // Keep existing roles
+      roles: undefined // Don't send roles for own profile update
     };
 
-    this.userService.updateUser(this.user.id, updatedData).subscribe({
+    this.userProfileService.updateMyProfile(updatedData).subscribe({
       next: () => {
         this.snackBar.open('Profil actualizat cu succes!', 'OK', { duration: 3000 });
         this.isEditMode = false;
         this.loadUserProfile();
       },
       error: (err) => {
-        this.snackBar.open('Eroare la actualizarea profilului', 'Închide', { duration: 3000 });
-        console.error('Error updating profile:', err);
+        this.snackBar.open(err.message || 'Eroare la actualizarea profilului', 'Închide', { duration: 5000 });
       }
     });
   }

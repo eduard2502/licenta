@@ -5,6 +5,9 @@ import com.magazincomputere.magazin_api.dto.*;
 import com.magazincomputere.magazin_api.security.services.UserDetailsImpl;
 import com.magazincomputere.magazin_api.service.ReviewService;
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -82,4 +85,11 @@ public class ReviewController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
+    @GetMapping("/user/my-reviews")
+@PreAuthorize("isAuthenticated()")
+public ResponseEntity<List<ReviewDto>> getMyReviews() {
+    Long userId = getCurrentUserId();
+    List<ReviewDto> reviews = reviewService.getUserReviews(userId);
+    return ResponseEntity.ok(reviews);
+}
 }
