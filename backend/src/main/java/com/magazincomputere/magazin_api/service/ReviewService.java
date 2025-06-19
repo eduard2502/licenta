@@ -13,9 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
@@ -118,6 +120,12 @@ public class ReviewService {
         summary.setRatingDistribution(distribution);
         return summary;
     }
+    public List<ReviewDto> getUserReviews(Long userId) {
+    List<Review> reviews = reviewRepository.findByUserId(userId);
+    return reviews.stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
+}
     
     private ReviewDto convertToDto(Review review) {
         ReviewDto dto = new ReviewDto();

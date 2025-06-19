@@ -7,7 +7,7 @@ export interface User {
 
 export interface UserUpdateDto {
   email: string;
-  roles: string[];
+  roles?: string[];
 }
 
 // Ar putea fi util să ai și un model pentru răspunsul JWT de la login
