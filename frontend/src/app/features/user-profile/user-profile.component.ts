@@ -63,16 +63,16 @@ export class UserProfileComponent implements OnInit {
   private router = inject(Router);
 
   ngOnInit(): void {
-    if (!this.authService.isLoggedIn()) {
-      this.snackBar.open('Sesiunea a expirat. Te rugăm să te autentifici din nou.', 'OK', { duration: 3000 });
-      this.router.navigate(['/login'], { queryParams: { returnUrl: '/my-profile' } });
-      return;
-    }
-    
-    this.initializeForm();
-    this.loadUserProfile();
-    this.loadUserReviews();
+  if (!this.authService.isLoggedIn()) {
+    this.snackBar.open('Te rugăm să te autentifici pentru a vizualiza profilul.', 'OK', { duration: 3000 });
+    this.router.navigate(['/login'], { queryParams: { returnUrl: '/my-profile' } });
+    return;
   }
+  
+  this.initializeForm();
+  this.loadUserProfile();
+  this.loadUserReviews();
+}
 
   initializeForm(): void {
     this.profileForm = this.fb.group({

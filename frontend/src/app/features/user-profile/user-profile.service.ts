@@ -4,15 +4,21 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { User, UserUpdateDto } from '../../shared/models/user.model';
-
+import { AuthService } from '../../auth/auth.service';
 @Injectable({
   providedIn: 'root'
 })
 export class UserProfileService {
   private apiUrl = '/api/users';
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
-  getMyProfile(): Observable<User> {
+   getMyProfile(): Observable<User> {
+    // First check if user is logged in
+    if (!this.authService.isLoggedIn()) {
+      return throwError(() => new Error('User not authenticated'));
+    }
+    
     return this.http.get<User>(`${this.apiUrl}/me`)
       .pipe(catchError(this.handleError));
   }

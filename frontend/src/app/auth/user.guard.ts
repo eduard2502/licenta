@@ -7,21 +7,24 @@ export const userGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isLoggedIn() && authService.role === 'user') {
-    return true;
-  } else if (authService.isLoggedIn() && authService.role !== 'user') {
-    // Utilizator logat dar nu e 'user' (ex: admin)
-    console.warn('UserGuard: User is logged in but not a regular user. Role:', authService.role);
-    if (authService.role === 'admin') {
-      // Poți decide să permiți adminilor accesul sau să îi redirecționezi
-      // return true; // Permite adminului să acceseze și paginile de user
-      return router.createUrlTree(['/admin']); // Redirecționează adminul la panoul său
-    }
-    // Alt rol necunoscut, redirecționează la login
-    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
-  } else {
-    // Utilizator nelogat
-    console.warn('UserGuard: User not logged in. Redirecting to /login with returnUrl:', state.url);
+  // 1. Check if user is logged in
+  if (!authService.isLoggedIn()) {
+    console.warn('UserGuard: User not logged in. Redirecting to /login.');
     return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
+
+  // 2. Check if the logged-in user has the 'user' role
+  if (authService.role === 'user') {
+    return true; // Allow access for regular users
+  }
+
+  // 3. If the user is logged in but is not a 'user' (e.g., an admin), redirect them.
+  if (authService.role === 'admin') {
+    console.warn("UserGuard: Admin attempting to access a user-only route. Redirecting to /admin.");
+    return router.createUrlTree(['/admin']);
+  }
+
+  // 4. Fallback for any other case (e.g., logged in but no role)
+  console.warn(`UserGuard: Access denied for role: ${authService.role}.`);
+  return router.createUrlTree(['/']);
 };

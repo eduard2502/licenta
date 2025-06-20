@@ -64,7 +64,11 @@ public class SecurityConfig {
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/specifications/**")).permitAll()
 
                 // Reguli pentru Coș (Cart)
-                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cart/**")).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cart/**")).hasRole("USER")
+                // Reguli pentru profil user
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/users/me")).authenticated()
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/users/me")).authenticated()
+
                 
                 // Reguli pentru Produse, Categorii, Specificații (doar Admin poate modifica)
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/products")).hasRole("ADMIN")
