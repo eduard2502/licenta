@@ -2,22 +2,113 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
   
-  .app-title {
-    margin-left: 8px;
-    cursor: pointer;
-    font-size: 1.25em;
+  .left-section {
+    display: flex;
+    align-items: center;
+    
+    .app-title {
+      margin-left: 8px;
+      cursor: pointer;
+      font-size: 1.25em;
+    }
   }
-
-  .toolbar-spacer {
-    flex: 1 1 auto;
+  
+  .right-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-
+  
   button[mat-button], button[mat-stroked-button], button[mat-icon-button] {
     margin: 0 4px;
   }
 }
 
+.search-container {
+  position: relative;
+  width: 300px;
+  
+  .search-form {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 4px;
+    height: 40px;
+    overflow: hidden;
+  }
+  
+  .search-input {
+    flex: 1;
+    border: none;
+    padding: 0 8px;
+    height: 100%;
+    outline: none;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.87);
+    min-width: 200px;
+    
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.54);
+    }
+  }
+  
+  .clear-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    
+    &:hover {
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+  
+  .search-icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    
+    &:hover {
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+}
+
 .main-content {
   min-height: calc(100vh - 64px);
+}
+
+@media (max-width: 768px) {
+  .app-toolbar {
+    flex-wrap: wrap;
+    padding: 8px 16px;
+  }
+  
+  .search-container {
+    order: 3;
+    width: 100%;
+    margin: 8px 0;
+  }
+  
+  .right-section {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 }

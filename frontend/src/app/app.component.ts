@@ -9,6 +9,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { InactivityService } from './auth/inactivity.service';
 import { AuthService } from './auth/auth.service';
 import { Subscription } from 'rxjs';
@@ -27,7 +30,10 @@ import { filter } from 'rxjs/operators';
     MatMenuModule,
     MatBadgeModule,
     MatDividerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
@@ -37,6 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   username: string | null = null;
   userRole: string | null = null;
+  searchQuery: string = '';
 
   private authSubscription!: Subscription;
   private routerSubscription!: Subscription;
@@ -89,6 +96,14 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  onSearchSubmit(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/products-list'], { 
+        queryParams: { search: this.searchQuery.trim() } 
+      });
+    }
+  }
+
   private clearNonPersistentAuth(): void {
     if (!this.authService.isLoggedIn()) {
       this.authService.logout();
@@ -108,4 +123,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     this.inactivityService.stopWatching();
   }
+  clearSearch(event: Event): void {
+  event.preventDefault();
+  event.stopPropagation();
+  this.searchQuery = '';
+}
 }

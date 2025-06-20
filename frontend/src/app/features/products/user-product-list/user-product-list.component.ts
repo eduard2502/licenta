@@ -8,16 +8,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select'; // Add this import
+import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { ActivatedRoute } from '@angular/router';
 
 import { Product } from '../../../shared/models/product.model';
-import { Category } from '../../../shared/models/category.model'; // Add this import
+import { Category } from '../../../shared/models/category.model';
 import { ProductService } from '../product.service';
 import { CartService } from '../../shopping-cart/cart.service';
-import { CategoryAdminService } from '../../admin/services/category.admin.service'; // Add this import
+import { CategoryAdminService } from '../../admin/services/category.admin.service';
 import { AddToCartRequest } from '../../../shared/models/cart.model';
 
 @Component({
@@ -32,7 +33,7 @@ import { AddToCartRequest } from '../../../shared/models/cart.model';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule, // Add this import
+    MatSelectModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatPaginatorModule,
@@ -45,9 +46,9 @@ import { AddToCartRequest } from '../../../shared/models/cart.model';
 export class UserProductListComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  categories: Category[] = []; // Add categories array
-  selectedCategoryId: number | null = null; // Add selected category tracking
-  searchText: string = ''; // Add search text tracking
+  categories: Category[] = [];
+  selectedCategoryId: number | null = null;
+  searchText: string = '';
   isLoading = true;
   error: string | null = null;
   isAddingToCart: { [key: number]: boolean } = {};
@@ -60,12 +61,20 @@ export class UserProductListComponent implements OnInit {
 
   private productService = inject(ProductService);
   private cartService = inject(CartService);
-  private categoryService = inject(CategoryAdminService); // Inject category service
+  private categoryService = inject(CategoryAdminService);
   private snackBar = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this.loadCategories(); // Load categories first
-    this.loadProducts();
+    // Listen for query parameter changes
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchText = params['search'];
+      }
+      
+      this.loadCategories();
+      this.loadProducts();
+    });
   }
 
   loadCategories(): void {
@@ -114,9 +123,9 @@ export class UserProductListComponent implements OnInit {
     // Apply text filter
     if (this.searchText) {
       filtered = filtered.filter(product => 
-        product.name.toLowerCase().includes(this.searchText) ||
-        product.categoryName?.toLowerCase().includes(this.searchText) ||
-        product.description?.toLowerCase().includes(this.searchText)
+        product.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        product.categoryName?.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        product.description?.toLowerCase().includes(this.searchText.toLowerCase())
       );
     }
 

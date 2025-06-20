@@ -1,47 +1,67 @@
 <mat-toolbar color="primary" class="app-toolbar" *ngIf="!hideToolbar">
-  <button mat-icon-button routerLink="/" aria-label="Pagina principală">
-    <mat-icon>storefront</mat-icon>
-  </button>
-  <span class="app-title" routerLink="/">{{ title }}</span>
-
-  <span class="toolbar-spacer"></span>
-
-  <button mat-button (click)="navigateToProducts()">
-    <mat-icon>list_alt</mat-icon> Produse
-  </button>
-
-  <button mat-icon-button routerLink="/cart" aria-label="Coș de cumpărături">
-    <mat-icon>shopping_cart</mat-icon>
-  </button>
-
-  <ng-container *ngIf="!isLoggedIn">
-    <button mat-stroked-button routerLink="/login" class="auth-button">
-      <mat-icon>login</mat-icon> Autentificare
+  <!-- Left side: Logo and Title -->
+  <div class="left-section">
+    <button mat-icon-button routerLink="/" aria-label="Pagina principală">
+      <mat-icon>storefront</mat-icon>
     </button>
-  </ng-container>
+    <span class="app-title" routerLink="/">{{ title }}</span>
+  </div>
+  
+  <!-- Right side: Search, Cart, User -->
+  <div class="right-section">
+    <!-- Search Bar -->
+    <div class="search-container">
+      <form (ngSubmit)="onSearchSubmit()" class="search-form">
+        <input type="search" 
+               placeholder="search"
+               [(ngModel)]="searchQuery"
+               name="searchQuery"
+               autocomplete="off"
+               class="search-input">
+        <!-- Search button -->
+        <button type="button" 
+                (click)="onSearchSubmit()" 
+                class="search-icon-button">
+          <mat-icon>search</mat-icon>
+        </button>
+      </form>
+    </div>
 
-  <ng-container *ngIf="isLoggedIn">
-    <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
-      <mat-icon>account_circle</mat-icon>
-      <span>{{ username || 'Cont' }}</span>
-      <mat-icon>arrow_drop_down</mat-icon>
+    <!-- Shopping Cart -->
+    <button mat-icon-button routerLink="/cart" aria-label="Coș de cumpărături">
+      <mat-icon>shopping_cart</mat-icon>
     </button>
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item routerLink="/my-profile" *ngIf="userRole === 'user'">
-        <mat-icon>manage_accounts</mat-icon> Profilul Meu
+
+    <!-- User Menu -->
+    <ng-container *ngIf="!isLoggedIn">
+      <button mat-stroked-button routerLink="/login" class="auth-button">
+        <mat-icon>login</mat-icon> Autentificare
       </button>
-      <button mat-menu-item routerLink="/my-orders" *ngIf="userRole === 'user'">
-        <mat-icon>history</mat-icon> Comenzile Mele
+    </ng-container>
+
+    <ng-container *ngIf="isLoggedIn">
+      <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+        <mat-icon>account_circle</mat-icon>
+        <span>{{ username || 'Cont' }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
       </button>
-      <button mat-menu-item routerLink="/admin" *ngIf="userRole === 'admin'">
-        <mat-icon>admin_panel_settings</mat-icon> Panou Admin
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon> Deconectare
-      </button>
-    </mat-menu>
-  </ng-container>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/my-profile" *ngIf="userRole === 'user'">
+          <mat-icon>manage_accounts</mat-icon> Profilul Meu
+        </button>
+        <button mat-menu-item routerLink="/my-orders" *ngIf="userRole === 'user'">
+          <mat-icon>history</mat-icon> Comenzile Mele
+        </button>
+        <button mat-menu-item routerLink="/admin" *ngIf="userRole === 'admin'">
+          <mat-icon>admin_panel_settings</mat-icon> Panou Admin
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon> Deconectare
+        </button>
+      </mat-menu>
+    </ng-container>
+  </div>
 </mat-toolbar>
 
 <div class="main-content">
