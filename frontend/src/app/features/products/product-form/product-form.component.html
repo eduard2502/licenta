@@ -50,6 +50,15 @@
           <mat-error *ngIf="f['categoryId'].hasError('required')">Categoria este obligatorie.</mat-error>
         </mat-form-field>
 
+        <div class="image-upload-section">
+         <label>Imagine Produs</label>
+          <input type="file" (change)="onFileChange($event)" accept="image/png, image/jpeg">
+           <div *ngIf="productForm.get('imageBase64')?.value" class="image-preview">
+           <p>Previzualizare:</p>
+           <img [src]="productForm.get('imageBase64')?.value" alt="Image Preview">
+         </div>
+        </div>
+
         <div formArrayName="specifications" class="specifications-section">
           <h3>Specificații Produs</h3>
           <div *ngFor="let specGroup of specificationsFormArray.controls; let i = index" [formGroupName]="i" class="specification-item">

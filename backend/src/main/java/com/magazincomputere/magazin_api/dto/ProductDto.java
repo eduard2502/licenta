@@ -25,7 +25,7 @@ public class ProductDto {
     @Min(value = 0, message = "Stocul nu poate fi negativ")
     private Integer stockQuantity;
 
-    // private String imageBase64; // COMENTAT TEMPORAR
+     private String imageBase64; 
 
     @NotNull(message = "ID-ul categoriei este obligatoriu")
     private Long categoryId;

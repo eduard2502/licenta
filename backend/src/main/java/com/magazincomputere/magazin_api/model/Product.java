@@ -48,9 +48,9 @@ public class Product {
     @Column(nullable = false)
     private Integer stockQuantity;
 
-    // @Lob // Adnotarea @Lob este importantă pentru câmpuri mari de tip TEXT în unele baze de date
-    // @Column(columnDefinition = "TEXT") // Asigură-te că tipul de coloană este adecvat pentru base64
-    // private String imageBase64; // COMENTAT TEMPORAR
+     @Lob 
+     @Column(columnDefinition = "LONGTEXT")
+     private String imageBase64; 
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)

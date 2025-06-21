@@ -6,7 +6,7 @@ export interface Product {
   description?: string;
   price: number;
   stockQuantity: number;
- // imageBase64?: string | null;
+  imageBase64?: string | null;
   categoryId: number;
   categoryName?: string;
   specifications?: SpecificationValue[];

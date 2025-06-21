@@ -35,8 +35,7 @@
       </mat-card-header>
 
       <div class="product-main-info">
-        <!-- Secțiunea Imagine - COMENTATĂ TEMPORAR -->
-        <!--
+       
         <div class="image-container">
           <img *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name" class="product-image">
           <div *ngIf="!product.imageBase64" class="no-image-placeholder">
@@ -44,7 +43,7 @@
             <span>Imagine indisponibilă</span>
           </div>
         </div>
-        -->
+        
         <div class="details-container">
           <p class="price">{{ product.price | currency:'RON':'symbol':'1.2-2' }}</p>
           <p class="stock" [ngClass]="{'in-stock': product.stockQuantity > 0, 'out-of-stock': product.stockQuantity === 0}">

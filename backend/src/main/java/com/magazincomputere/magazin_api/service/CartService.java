@@ -181,7 +181,7 @@ public class CartService {
             itemDto.setProductDescription(item.getProduct().getDescription());
             itemDto.setProductPrice(item.getProduct().getPrice());
             itemDto.setProductStock(item.getProduct().getStockQuantity());
-            // itemDto.setProductImageBase64(item.getProduct().getImageBase64());
+            itemDto.setProductImageBase64(item.getProduct().getImageBase64());
             itemDto.setQuantity(item.getQuantity());
             itemDto.setSubtotal(item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())));
             return itemDto;

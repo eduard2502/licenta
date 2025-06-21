@@ -51,7 +51,7 @@ public class ProductService {
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
-        // MODIFICARE: Adăugăm stockQuantity la creare
+        product.setImageBase64(productDto.getImageBase64());
         product.setStockQuantity(productDto.getStockQuantity());
         
         Category category = categoryRepository.findById(productDto.getCategoryId())
@@ -84,7 +84,7 @@ public class ProductService {
         existingProduct.setName(productDto.getName());
         existingProduct.setDescription(productDto.getDescription());
         existingProduct.setPrice(productDto.getPrice());
-        // MODIFICARE: Adăugăm stockQuantity la actualizare
+        existingProduct.setImageBase64(productDto.getImageBase64());
         existingProduct.setStockQuantity(productDto.getStockQuantity());
 
         if (!existingProduct.getCategory().getId().equals(productDto.getCategoryId())) {
@@ -133,6 +133,7 @@ private ProductDto mapToDto(Product product) {
     dto.setStockQuantity(product.getStockQuantity());
     dto.setCategoryId(product.getCategory().getId());
     dto.setCategoryName(product.getCategory().getName());
+     dto.setImageBase64(product.getImageBase64());
     
     // Add review data
     dto.setAverageRating(product.calculateAverageRating());

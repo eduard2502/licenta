@@ -17,12 +17,13 @@
     <div *ngIf="isLoading" class="loading-indicator">
       <mat-spinner diameter="60"></mat-spinner>
     </div>
-
+    
     <div class="product-grid" *ngIf="!isLoading && products.length > 0">
       <mat-card *ngFor="let product of products" class="product-card" [routerLink]="['/products', product.id]">
         <div class="product-image-container">
-           <mat-icon>inventory_2</mat-icon>
-        </div>
+           <img *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name">
+            <mat-icon *ngIf="!product.imageBase64">inventory_2</mat-icon>
+        </div> 
         <mat-card-header>
           <mat-card-title>{{ product.name }}</mat-card-title>
         </mat-card-header>

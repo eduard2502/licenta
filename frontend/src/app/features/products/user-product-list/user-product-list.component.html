@@ -34,9 +34,10 @@
   <!-- Grid View for Products -->
   <div class="products-grid" *ngIf="!isLoading && !error && filteredProducts.length > 0">
     <mat-card *ngFor="let product of getPaginatedProducts()" class="product-card">
-      <div class="product-image" [routerLink]="['/products', product.id]">
-        <mat-icon>inventory_2</mat-icon>
-      </div>
+       <div class="product-image" [routerLink]="['/products', product.id]">
+    <img *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name">
+    <mat-icon *ngIf="!product.imageBase64">inventory_2</mat-icon>
+  </div>
       
       <mat-card-header [routerLink]="['/products', product.id]">
         <mat-card-title>{{ product.name }}</mat-card-title>

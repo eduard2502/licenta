@@ -17,4 +17,5 @@ public class CartDto {
     private BigDecimal totalAmount;
     private LocalDateTime lastUpdated;
     private Integer totalItems;
+     private String productImageBase64; 
 }

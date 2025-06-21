@@ -79,19 +79,26 @@
 .product-card {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  // Remove dark background - let Material theme handle it
-  
+ 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   }
   
-  .product-image-container {
+   .product-image-container {
     height: 220px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(0,0,0,0.05);
+    overflow: hidden; 
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; 
+      display: block;
+    }
     
     mat-icon {
       font-size: 70px;

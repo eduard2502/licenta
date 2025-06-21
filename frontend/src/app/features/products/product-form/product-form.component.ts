@@ -63,6 +63,7 @@ export class ProductFormComponent implements OnInit {
       price: [null, [Validators.required, Validators.min(0.01)]],
       stockQuantity: [0, [Validators.required, Validators.min(0), Validators.pattern(/^[0-9]*$/)]],
       categoryId: [null, Validators.required],
+      imageBase64: [null as string | null],
       specifications: this.fb.array([])
     });
 
@@ -118,6 +119,7 @@ export class ProductFormComponent implements OnInit {
       price: product.price,
       stockQuantity: product.stockQuantity,
       categoryId: product.categoryId,
+      imageBase64: product.imageBase64 
     });
     
     this.specificationsFormArray.clear();
@@ -141,6 +143,21 @@ export class ProductFormComponent implements OnInit {
 
   removeSpecification(index: number): void {
     this.specificationsFormArray.removeAt(index);
+  }
+
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.productForm.patchValue({
+          imageBase64: reader.result as string
+        });
+        this.productForm.markAsDirty(); // Mark form as dirty to enable save button
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   onSubmit(): void {
