@@ -3,11 +3,13 @@ export interface User {
   username: string;
   email: string;
   roles: string[];
+  avatarImageBase64?: string | null;
 }
 
 export interface UserUpdateDto {
   email: string;
   roles?: string[];
+  avatarImageBase64?: string | null;
 }
 
 // Ar putea fi util să ai și un model pentru răspunsul JWT de la login
@@ -17,6 +19,7 @@ export interface JwtResponse {
     id: number;
     username: string;
     email: string;
+    avatarImageBase64?: string | null;
     roles: string[];
 }
 

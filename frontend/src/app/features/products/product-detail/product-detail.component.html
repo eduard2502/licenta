@@ -61,13 +61,13 @@
         </div>
       </div>
       <div class="rating-info" *ngIf="product.averageRating !== undefined">
-  <app-star-rating 
+    <app-star-rating 
     [rating]="product.averageRating" 
     [readonly]="true"
     [showText]="true"
     [reviewCount]="product.reviewCount">
-  </app-star-rating>
-</div>
+    </app-star-rating>
+    </div>
       <mat-card-content *ngIf="product.specifications && product.specifications.length > 0" class="specifications-section">
         <mat-divider></mat-divider>
         <h3>Specificații Tehnice</h3>
@@ -79,6 +79,6 @@
         </mat-list>
       </mat-card-content>
     </mat-card>
+     <app-review-list [productId]="productId" class="review-section"></app-review-list>
   </div>
 </div>
-<app-review-list [productId]="productId"></app-review-list>

@@ -17,21 +17,35 @@
     <!-- Profile Information Tab -->
     <mat-tab label="Informații Profil">
       <div class="tab-content">
-        <mat-card class="profile-card">
+        <mat-card class="profile-card" *ngIf="user">
           <mat-card-header>
-            <div class="profile-avatar-section">
-              <div class="avatar-placeholder">
-                <mat-icon>account_circle</mat-icon>
-              </div>
-              <div class="profile-header-info">
-                <mat-card-title>{{ user?.username }}</mat-card-title>
-                <mat-card-subtitle>Membru din {{ formatDate('2024-01-01') }}</mat-card-subtitle>
-              </div>
-            </div>
-            <button mat-icon-button (click)="toggleEditMode()" *ngIf="!isEditMode">
-              <mat-icon>edit</mat-icon>
-            </button>
-          </mat-card-header>
+    <div class="profile-avatar-section">
+      <div class="avatar-wrapper">
+        <img *ngIf="user.avatarImageBase64" 
+             [src]="user.avatarImageBase64" 
+             alt="User Avatar"
+             class="user-avatar">
+        <mat-icon *ngIf="!user.avatarImageBase64" class="default-avatar">account_circle</mat-icon>
+        
+        <!-- Upload button overlay -->
+        <div class="avatar-overlay" *ngIf="isEditMode">
+          <input type="file" #fileInput hidden (change)="onFileChange($event)" accept="image/png, image/jpeg">
+          <button mat-mini-fab (click)="fileInput.click()" class="upload-btn">
+            <mat-icon>camera_alt</mat-icon>
+          </button>
+        </div>
+      </div>
+      
+      <div class="profile-header-info">
+        <mat-card-title>{{ user.username }}</mat-card-title>
+        <mat-card-subtitle>Membru din {{ formatDate('2025-06-20') }}</mat-card-subtitle>
+      </div>
+    </div>
+    
+    <button mat-icon-button (click)="toggleEditMode()" *ngIf="!isEditMode">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </mat-card-header>
 
           <mat-card-content>
             <form [formGroup]="profileForm">

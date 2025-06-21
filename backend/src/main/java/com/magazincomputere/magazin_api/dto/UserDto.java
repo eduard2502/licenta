@@ -25,10 +25,10 @@ public class UserDto {
     @Size(max = 50)
     @Email(message = "Formatul emailului este invalid.")
     private String email;
+    private String avatarImageBase64;
 
     // Parola nu este expusă în DTO-urile de răspuns.
     // Pentru schimbarea parolei, se va folosi un DTO dedicat.
 
     private Set<String> roles; // Numele rolurilor, ex: "ROLE_ADMIN", "ROLE_USER"
-                               // La update de către admin, acest câmp poate fi modificat.
 }

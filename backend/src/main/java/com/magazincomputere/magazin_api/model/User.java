@@ -33,23 +33,15 @@ public class User {
     @Column(nullable = false, length = 100) // Lungime pentru parola encodată
     private String password;
 
+     @Column(columnDefinition = "LONGTEXT") // Use the explicit definition
+    private String avatarImageBase64;
+
     @ManyToMany(fetch = FetchType.EAGER) // EAGER pentru a încărca rolurile odată cu utilizatorul
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    // Relația cu comenzile (un utilizator poate avea mai multe comenzi)
-    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // @ToString.Exclude
-    // @EqualsAndHashCode.Exclude
-    // private List<Order> orders;
-
-    // Relația cu Customer (dacă un User este și Customer)
-    // @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // @ToString.Exclude
-    // @EqualsAndHashCode.Exclude
-    // private Customer customer;
 
     public User(String username, String email, String password) {
         this.username = username;

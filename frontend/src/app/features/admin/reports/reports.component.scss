@@ -1,5 +1,5 @@
 .reports-container {
-  padding: 20px;
+  padding: 0px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -78,16 +78,20 @@
     }
 
     .summary-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+     width: 64px;  
+     height: 64px; 
+     padding: 16px; 
+     border-radius: 12px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     flex-shrink: 0; 
 
       mat-icon {
-        font-size: 32px;
-        color: white;
+         font-size: 32px;
+         width: 32px;  
+         height: 32px; 
+         color: white;
       }
 
       &.sales {
@@ -183,6 +187,9 @@
 
     mat-icon {
       font-size: 32px;
+      width: 32px;  
+      height: 32px; 
+      flex-shrink: 0; 
     }
 
     .stat-value {

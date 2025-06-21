@@ -59,10 +59,14 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
+        User user = userRepository.findById(userDetails.getId()).orElse(null);
+        String avatar = (user != null) ? user.getAvatarImageBase64() : null;        
+
         return ResponseEntity.ok(new JwtResponse(jwt,
                                                  userDetails.getId(),
                                                  userDetails.getUsername(),
                                                  userDetails.getEmail(),
+                                                 avatar,
                                                  roles));
     }
 

@@ -109,7 +109,7 @@
   }
   .specification-item {
     border-bottom: 1px dotted rgba(0,0,0,0.12);
-    padding: 8px 0;
+    padding: 0px 0;
     &:last-child {
       border-bottom: none;
     }
@@ -122,4 +122,19 @@
       opacity: 0.87;
     }
   }
+}
+.review-section {
+  margin-top: 24px;
+  
+  // If the review component uses a mat-card, this will ensure consistent spacing
+  ::ng-deep mat-card {
+    width: 100%;
+  }
+}
+
+// Optional: If you want the reviews in a separate card-like section
+.product-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }

@@ -35,6 +35,7 @@ public class UserService {
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
+        dto.setAvatarImageBase64(user.getAvatarImageBase64());
         if (user.getRoles() != null) {
             dto.setRoles(user.getRoles().stream()
                 .map(role -> role.getName().name())
@@ -69,6 +70,10 @@ public class UserService {
 
         // Update email
         existingUser.setEmail(userUpdateDto.getEmail());
+        
+        if (userUpdateDto.getAvatarImageBase64() != null) {
+            existingUser.setAvatarImageBase64(userUpdateDto.getAvatarImageBase64());
+        }
 
         // Update roles if provided
         if (userUpdateDto.getRoles() != null && !userUpdateDto.getRoles().isEmpty()) {

@@ -78,6 +78,7 @@ export class UserProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       username: [{ value: '', disabled: true }],
       email: ['', [Validators.required, Validators.email]],
+      avatarImageBase64: [null as string | null],
       fullName: [''],
       phone: [''],
       address: ['']
@@ -93,7 +94,8 @@ export class UserProfileComponent implements OnInit {
         this.user = user;
         this.profileForm.patchValue({
           username: user.username,
-          email: user.email
+          email: user.email,
+          avatarImageBase64: user.avatarImageBase64
         });
         this.isLoading = false;
       },
@@ -156,12 +158,26 @@ export class UserProfileComponent implements OnInit {
       this.loadUserProfile();
     }
   }
-
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.profileForm.patchValue({
+          avatarImageBase64: reader.result as string
+        });
+        this.profileForm.markAsDirty();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
   saveProfile(): void {
     if (this.profileForm.invalid || !this.user) return;
 
     const updatedData = {
       email: this.profileForm.get('email')?.value,
+      avatarImageBase64: this.profileForm.get('avatarImageBase64')?.value,
       roles: undefined // Don't send roles for own profile update
     };
 

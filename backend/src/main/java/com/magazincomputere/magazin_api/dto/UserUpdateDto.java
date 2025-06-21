@@ -17,6 +17,7 @@ public class UserUpdateDto {
     @Size(max = 50)
     @Email(message = "Formatul emailului este invalid.")
     private String email;
+    private String avatarImageBase64;
 
     private Set<String> roles; // Rolurile pot fi opționale la update
 }
