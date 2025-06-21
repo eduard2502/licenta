@@ -6,6 +6,12 @@
     </button>
   </div>
 
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Filtrează produse</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Caută după nume, categorie...">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
   <div *ngIf="isLoading" class="loading-indicator">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Se încarcă produsele...</p>
