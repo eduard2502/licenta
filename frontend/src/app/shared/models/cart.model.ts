@@ -34,7 +34,8 @@ export interface CheckoutRequest {
   phone: string;
   billingAddress: string;
   shippingAddress?: string;
-  paymentMethod: 'CARD' | 'CASH_ON_DELIVERY' | 'BANK_TRANSFER';
+  paymentMethod: 'CARD' | 'CASH_ON_DELIVERY' | 'BANK_TRANSFER' | 'PAYPAL';
+  paypalOrderId?: string; 
   orderNotes?: string;
   agreeToTerms: boolean;
 }

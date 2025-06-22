@@ -11,6 +11,7 @@ import { Order } from '../../shared/models/order.model';
 })
 export class CartService {
   private apiUrl = '/api/cart';
+  private paypalApiUrl = '/api/paypal';
   private cartSubject = new BehaviorSubject<Cart | null>(null);
   public cart$ = this.cartSubject.asObservable();
 
@@ -80,4 +81,15 @@ export class CartService {
     console.error('Cart service error:', error);
     return throwError(() => new Error(errorMessage));
   }
+  createPayPalOrder(amount: number): Observable<any> {
+  return this.http.post(`${this.apiUrl}/paypal/create-order`, {
+    amount: amount,
+    currency: 'USD' // Change to RON if needed
+  }).pipe(catchError(this.handleError));
+}
+
+capturePayPalOrder(orderId: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}/paypal/capture-order/${orderId}`, {})
+    .pipe(catchError(this.handleError));
+}
 }

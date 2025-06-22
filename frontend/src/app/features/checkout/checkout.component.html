@@ -1,4 +1,3 @@
-<!-- frontend/src/app/features/checkout/checkout.component.html -->
 <div class="checkout-container">
   <h1 class="page-title">Finalizare comandă</h1>
 
@@ -10,9 +9,7 @@
   <div *ngIf="!isLoading && cart" class="checkout-content">
     <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
       <div class="checkout-grid">
-        <!-- Left column - Form sections -->
         <div class="checkout-form">
-          <!-- Contact Information -->
           <mat-card formGroupName="contactInfo">
             <mat-card-header>
               <mat-card-title>
@@ -44,7 +41,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Billing Address -->
           <mat-card formGroupName="billingAddress">
             <mat-card-header>
               <mat-card-title>
@@ -76,7 +72,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Shipping Address -->
           <mat-card formGroupName="shippingAddress">
             <mat-card-header>
               <mat-card-title>
@@ -113,7 +108,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Payment Method -->
           <mat-card formGroupName="payment">
             <mat-card-header>
               <mat-card-title>
@@ -129,6 +123,12 @@
                   <span class="payment-note">Plătești cash când primești comanda</span>
                 </mat-radio-button>
                 
+                <mat-radio-button value="PAYPAL">
+                  <mat-icon>payment</mat-icon>
+                  PayPal
+                  <span class="payment-note">Plătește securizat cu PayPal</span>
+                </mat-radio-button>
+                
                 <mat-radio-button value="BANK_TRANSFER">
                   <mat-icon>account_balance</mat-icon>
                   Transfer bancar
@@ -142,6 +142,11 @@
                 </mat-radio-button>
               </mat-radio-group>
 
+              <div id="paypal-button-container" 
+                   *ngIf="checkoutForm.get('payment.paymentMethod')?.value === 'PAYPAL'" 
+                   class="paypal-container">
+              </div>
+
               <mat-form-field appearance="outline" class="full-width notes-field">
                 <mat-label>Note comandă (opțional)</mat-label>
                 <textarea matInput formControlName="orderNotes" rows="3" 
@@ -150,7 +155,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Terms and Conditions -->
           <mat-card class="terms-card">
             <mat-card-content>
               <mat-checkbox formControlName="agreeToTerms" required>
@@ -162,7 +166,6 @@
           </mat-card>
         </div>
 
-        <!-- Right column - Order Summary -->
         <div class="order-summary">
           <mat-card>
             <mat-card-header>
@@ -203,7 +206,8 @@
                       color="primary" 
                       type="submit" 
                       class="place-order-button"
-                      [disabled]="isProcessing || checkoutForm.invalid">
+                      [disabled]="isProcessing || checkoutForm.invalid"
+                      *ngIf="checkoutForm.get('payment.paymentMethod')?.value !== 'PAYPAL'">
                 <mat-spinner *ngIf="isProcessing" diameter="20"></mat-spinner>
                 <span *ngIf="!isProcessing">
                   <mat-icon>check_circle</mat-icon>

@@ -101,6 +101,8 @@ public class SecurityConfig {
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/reviews")).authenticated()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/reviews/**")).authenticated()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/reviews/**")).authenticated()
+                
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/paypal/**")).hasRole("USER")
 
                 // -- FINAL: REGULA GENERALĂ (TREBUIE SĂ FIE ULTIMA) --
                 .anyRequest().authenticated()
