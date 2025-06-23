@@ -75,32 +75,34 @@ export class UserProfileComponent implements OnInit {
 }
 
   initializeForm(): void {
-    this.profileForm = this.fb.group({
-      username: [{ value: '', disabled: true }],
-      email: ['', [Validators.required, Validators.email]],
-      avatarImageBase64: [null as string | null],
-      fullName: [''],
-      phone: [''],
-      address: ['']
-    });
-  }
+  this.profileForm = this.fb.group({
+    username: [{ value: '', disabled: true }],
+    email: ['', [Validators.required, Validators.email]],
+    avatarImageBase64: [null as string | null],
+    fullName: [''],
+    phone: [''],
+    address: ['']
+  });
+}
 
-  loadUserProfile(): void {
-    this.isLoading = true;
-    
-    // Use the new service to get profile data
-    this.userProfileService.getMyProfile().subscribe({
-      next: (user) => {
-        this.user = user;
-        this.profileForm.patchValue({
-          username: user.username,
-          email: user.email,
-          avatarImageBase64: user.avatarImageBase64
-        });
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.isLoading = false;
+loadUserProfile(): void {
+  this.isLoading = true;
+  
+  this.userProfileService.getMyProfile().subscribe({
+    next: (user) => {
+      this.user = user;
+      this.profileForm.patchValue({
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        avatarImageBase64: user.avatarImageBase64
+      });
+      this.isLoading = false;
+    },
+    error: (err) => {
+      this.isLoading = false;
         
         // Check if it's an authentication error
         if (err.message.includes('Sesiunea a expirat')) {
@@ -175,11 +177,14 @@ export class UserProfileComponent implements OnInit {
   saveProfile(): void {
     if (this.profileForm.invalid || !this.user) return;
 
-    const updatedData = {
-      email: this.profileForm.get('email')?.value,
-      avatarImageBase64: this.profileForm.get('avatarImageBase64')?.value,
-      roles: undefined // Don't send roles for own profile update
-    };
+     const updatedData = {
+    email: this.profileForm.get('email')?.value,
+    fullName: this.profileForm.get('fullName')?.value || undefined,
+    phone: this.profileForm.get('phone')?.value || undefined,
+    address: this.profileForm.get('address')?.value || undefined,
+    avatarImageBase64: this.profileForm.get('avatarImageBase64')?.value,
+    roles: undefined // Don't send roles for own profile update
+  };
 
     this.userProfileService.updateMyProfile(updatedData).subscribe({
       next: () => {

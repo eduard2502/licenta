@@ -57,7 +57,6 @@
 
 // Profile Card Styles
 .profile-card {
-  // Remove dark background
   
   mat-card-header {
     display: flex;
@@ -282,7 +281,7 @@
 
 .orders-placeholder {
   text-align: center;
-  padding: 80px 20px;
+  padding: 0px 10px;
 
   mat-icon {
     font-size: 80px;

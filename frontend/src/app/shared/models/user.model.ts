@@ -2,16 +2,21 @@ export interface User {
   id: number;
   username: string;
   email: string;
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  avatarImageBase64?: string;
   roles: string[];
-  avatarImageBase64?: string | null;
 }
 
 export interface UserUpdateDto {
   email: string;
-  roles?: string[];
+  fullName?: string;
+  phone?: string;
+  address?: string;
   avatarImageBase64?: string | null;
+  roles?: string[];
 }
-
 // Ar putea fi util să ai și un model pentru răspunsul JWT de la login
 export interface JwtResponse {
     token: string;

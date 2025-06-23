@@ -1,3 +1,4 @@
+// backend/src/main/java/com/magazincomputere/magazin_api/dto/UserUpdateDto.java
 package com.magazincomputere.magazin_api.dto;
 
 import jakarta.validation.constraints.Email;
@@ -17,7 +18,17 @@ public class UserUpdateDto {
     @Size(max = 50)
     @Email(message = "Formatul emailului este invalid.")
     private String email;
+
+    @Size(max = 100)
+    private String fullName;
+
+    @Size(max = 20)
+    private String phone;
+
+    @Size(max = 500)
+    private String address;
+
     private String avatarImageBase64;
 
-    private Set<String> roles; // Rolurile pot fi opționale la update
+    private Set<String> roles;
 }

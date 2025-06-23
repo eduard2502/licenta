@@ -1,3 +1,4 @@
+// backend/src/main/java/com/magazincomputere/magazin_api/dto/UserDto.java
 package com.magazincomputere.magazin_api.dto;
 
 import jakarta.validation.constraints.Email;
@@ -15,8 +16,6 @@ import java.util.Set;
 public class UserDto {
     private Long id;
 
-    // La creare/update, username-ul nu ar trebui să se schimbe ușor după creare.
-    // Validările sunt mai importante pentru SignupRequestDto.
     @NotBlank(message = "Numele de utilizator este obligatoriu.")
     @Size(min = 3, max = 20)
     private String username;
@@ -25,10 +24,11 @@ public class UserDto {
     @Size(max = 50)
     @Email(message = "Formatul emailului este invalid.")
     private String email;
+
+    private String fullName;
+    private String phone;
+    private String address;
     private String avatarImageBase64;
 
-    // Parola nu este expusă în DTO-urile de răspuns.
-    // Pentru schimbarea parolei, se va folosi un DTO dedicat.
-
-    private Set<String> roles; // Numele rolurilor, ex: "ROLE_ADMIN", "ROLE_USER"
+    private Set<String> roles;
 }

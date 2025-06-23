@@ -1,3 +1,4 @@
+// backend/src/main/java/com/magazincomputere/magazin_api/model/User.java
 package com.magazincomputere.magazin_api.model;
 
 import jakarta.persistence.*;
@@ -9,7 +10,6 @@ import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.List; // Pentru comenzi
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -30,18 +30,26 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 100) // Lungime pentru parola encodată
+    @Column(nullable = false, length = 100)
     private String password;
 
-     @Column(columnDefinition = "LONGTEXT") // Use the explicit definition
+    @Column(name = "full_name", length = 100)
+    private String fullName;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(columnDefinition = "TEXT")
+    private String address;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String avatarImageBase64;
 
-    @ManyToMany(fetch = FetchType.EAGER) // EAGER pentru a încărca rolurile odată cu utilizatorul
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-
 
     public User(String username, String email, String password) {
         this.username = username;
