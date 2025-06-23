@@ -54,23 +54,27 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // -- ÎNCEPUT: REGULI SPECIFICE (TREBUIE SĂ FIE PRIMELE) --
+                // -- START: SPECIFIC RULES (MUST BE FIRST) --
 
-                // Permite acces liber la autentificare, produse, categorii etc.
+                // Permit all access to swagger, h2-console, auth, products, categories, etc.
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/h2-console/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/products/**")).permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/categories/**")).permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/specifications/**")).permitAll()
 
-                // Reguli pentru Coș (Cart)
+                // Rules for Cart
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cart/**")).hasRole("USER")
-                // Reguli pentru profil user
+                
+                // Rules for PayPal
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/cart/paypal/**")).hasRole("USER")
+
+                // Rules for User Profile
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/users/me")).authenticated()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/users/me")).authenticated()
 
                 
-                // Reguli pentru Produse, Categorii, Specificații (doar Admin poate modifica)
+                // Rules for Products, Categories, Specifications (only Admin can modify)
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/products")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/products/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/products/**")).hasRole("ADMIN")
@@ -81,18 +85,18 @@ public class SecurityConfig {
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/specifications/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/specifications/**")).hasRole("ADMIN")
 
-                // Reguli pentru Comenzi (Orders)
+                // Rules for Orders
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/orders")).hasAnyRole("USER", "ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/my-history")).hasAnyRole("USER", "ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/orders/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/orders/**/status")).hasRole("ADMIN")
 
-                // Reguli pentru Utilizatori, Clienți și Rapoarte (doar Admin)
+                // Rules for Users, Customers and Reports (Admin only)
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/users/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/customers/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reports/**")).hasRole("ADMIN")
                 
-                // Permite fișierele statice pentru frontend
+                // Permit static files for the frontend
                 .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.jpg", "/*.webmanifest", "/assets/**").permitAll()
 
                 // Public access to view reviews
@@ -101,17 +105,16 @@ public class SecurityConfig {
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/reviews")).authenticated()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.PUT, "/api/reviews/**")).authenticated()
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/reviews/**")).authenticated()
-                
-                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/paypal/**")).hasRole("USER")
 
-                // -- FINAL: REGULA GENERALĂ (TREBUIE SĂ FIE ULTIMA) --
+                // -- END: GENERAL RULE (MUST BE LAST) --
                 .anyRequest().authenticated()
             );
 
-        // Necesar pentru H2 console
+        // Required for H2 console
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+    
 }
