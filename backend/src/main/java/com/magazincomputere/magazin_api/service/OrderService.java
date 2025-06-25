@@ -24,17 +24,13 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-    // @Autowired // Comentat - presupunem salvare prin cascadă din Order
-    // private OrderItemRepository orderItemRepository; 
-
     @Autowired
     private ProductRepository productRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    // Remove CustomerRepository
 
     private OrderDto convertToDto(Order order) {
         OrderDto orderDto = new OrderDto();
@@ -42,13 +38,10 @@ public class OrderService {
         if (order.getUser() != null) {
             orderDto.setUserId(order.getUser().getId());
             orderDto.setUsername(order.getUser().getUsername());
-        } else if (order.getCustomer() != null) {
-             orderDto.setUsername(order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName());
         }
         orderDto.setOrderDate(order.getOrderDate());
         orderDto.setStatus(order.getStatus());
-        orderDto.setTotalAmount(order.getTotalAmount()); // Direct BigDecimal to BigDecimal
-
+        orderDto.setTotalAmount(order.getTotalAmount());
 
         orderDto.setCustomerName(order.getShippingCustomerName());
         orderDto.setShippingAddress(order.getShippingAddress());
@@ -69,32 +62,20 @@ public class OrderService {
         dto.setProductId(orderItem.getProductIdSnapshot());
         dto.setProductNameSnapshot(orderItem.getProductNameSnapshot());
         dto.setQuantity(orderItem.getQuantity());
-        dto.setPriceAtPurchase(orderItem.getPriceAtPurchase()); // Direct BigDecimal to BigDecimal
-        dto.setLineTotal(orderItem.getLineTotal()); // Direct BigDecimal to BigDecimal
+        dto.setPriceAtPurchase(orderItem.getPriceAtPurchase());
+        dto.setLineTotal(orderItem.getLineTotal());
         return dto;
     }
-
 
     @Transactional
     public OrderDto createOrder(OrderDto orderDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        Customer customer = customerRepository.findByUserId(userId).orElseGet(() -> {
-            Customer newCustomer = new Customer();
-            newCustomer.setUser(user);
-            newCustomer.setEmail(orderDto.getCustomerEmail());
-            String[] nameParts = orderDto.getCustomerName().split(" ", 2);
-            newCustomer.setFirstName(nameParts.length > 0 ? nameParts[0] : orderDto.getCustomerName());
-            if (nameParts.length > 1) newCustomer.setLastName(nameParts[1]); else newCustomer.setLastName("");
-            newCustomer.setPhone(orderDto.getCustomerPhone());
-            newCustomer.setAddressDetails(orderDto.getShippingAddress());
-            return customerRepository.save(newCustomer);
-        });
+        // Remove all Customer-related logic
 
         Order order = new Order();
         order.setUser(user);
-        order.setCustomer(customer);
         order.setShippingCustomerName(orderDto.getCustomerName());
         order.setShippingAddress(orderDto.getShippingAddress());
         order.setShippingCustomerEmail(orderDto.getCustomerEmail());
@@ -121,14 +102,13 @@ public class OrderService {
             orderItem.setProductNameSnapshot(product.getName());
             orderItem.setQuantity(itemDto.getQuantity());
             
-            // Acum `product.getPrice()` este deja BigDecimal
             BigDecimal itemPrice = product.getPrice(); 
-            orderItem.setPriceAtPurchase(itemPrice); // Setează direct BigDecimal
+            orderItem.setPriceAtPurchase(itemPrice);
 
             BigDecimal quantity = new BigDecimal(itemDto.getQuantity());
             BigDecimal lineTotal = itemPrice.multiply(quantity); 
             
-            orderItem.setLineTotal(lineTotal); // Setează direct BigDecimal
+            orderItem.setLineTotal(lineTotal);
 
             orderItemsList.add(orderItem);
             totalOrderAmount = totalOrderAmount.add(lineTotal);
@@ -138,7 +118,7 @@ public class OrderService {
         }
 
         order.setOrderItems(orderItemsList);
-        order.setTotalAmount(totalOrderAmount); // Setează direct BigDecimal
+        order.setTotalAmount(totalOrderAmount);
 
         Order savedOrder = orderRepository.save(order);
         return convertToDto(savedOrder);
@@ -162,7 +142,8 @@ public class OrderService {
         }
         return orders.stream().map(this::convertToDto).collect(Collectors.toList());
     }
-     public OrderDto getOrderById(Long orderId) {
+    
+    public OrderDto getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
         return convertToDto(order);
@@ -173,7 +154,6 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
 
-        // TODO: Adaugă validare pentru tranzițiile de status permise, dacă e necesar
         order.setStatus(statusUpdateDto.getNewStatus().toUpperCase());
         Order updatedOrder = orderRepository.save(order);
         return convertToDto(updatedOrder);

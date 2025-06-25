@@ -1,6 +1,6 @@
 // src/app/features/products/product.service.ts
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Product } from '../../shared/models/product.model';
@@ -11,18 +11,19 @@ import { Product } from '../../shared/models/product.model';
 export class ProductService {
   private apiUrl = '/api/products';
 
-  private http = inject(HttpClient);
+   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl)
-      .pipe(catchError(this.handleError));
+  getAll(category?: string): Observable<Product[]> {
+    let params = new HttpParams();
+    if (category) {
+      params = params.set('category', category);
+    }
+    return this.http.get<Product[]>(this.apiUrl, { params });
   }
 
   getById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.apiUrl}/${id}`)
-      .pipe(catchError(this.handleError));
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
-
   create(product: Product): Observable<Product> {
     return this.http.post<Product>(this.apiUrl, product)
       .pipe(catchError(this.handleError));

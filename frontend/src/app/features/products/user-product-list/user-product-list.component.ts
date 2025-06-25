@@ -1,7 +1,7 @@
 // frontend/src/app/features/products/user-product-list/user-product-list.component.ts
 import { Component, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe, SlicePipe } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { ActivatedRoute } from '@angular/router';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { Product } from '../../../shared/models/product.model';
 import { Category } from '../../../shared/models/category.model';
@@ -37,6 +37,7 @@ import { AddToCartRequest } from '../../../shared/models/cart.model';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatPaginatorModule,
+    MatChipsModule,
     CurrencyPipe,
     SlicePipe
   ],
@@ -48,6 +49,7 @@ export class UserProductListComponent implements OnInit {
   filteredProducts: Product[] = [];
   categories: Category[] = [];
   selectedCategoryId: number | null = null;
+  selectedCategoryName: string | null = null;
   searchText: string = '';
   isLoading = true;
   error: string | null = null;
@@ -68,6 +70,13 @@ export class UserProductListComponent implements OnInit {
   ngOnInit(): void {
     // Listen for query parameter changes
     this.route.queryParams.subscribe(params => {
+      // Handle category filter from query params
+      if (params['category']) {
+        this.selectedCategoryName = params['category'];
+      } else {
+        this.selectedCategoryName = null;
+      }
+      
       if (params['search']) {
         this.searchText = params['search'];
       }
@@ -81,10 +90,18 @@ export class UserProductListComponent implements OnInit {
     this.categoryService.getAll().subscribe({
       next: (data) => {
         this.categories = data;
+        // If we have a category name from query params, find its ID
+        if (this.selectedCategoryName) {
+          const category = this.categories.find(c => 
+            c.name.toLowerCase() === this.selectedCategoryName!.toLowerCase()
+          );
+          if (category) {
+            this.selectedCategoryId = category.id!;
+          }
+        }
       },
       error: (err) => {
         console.error('Failed to load categories:', err);
-        // Don't show error to user as categories are optional for filtering
       }
     });
   }
@@ -114,6 +131,19 @@ export class UserProductListComponent implements OnInit {
   }
 
   applyCategoryFilter(): void {
+    // Update selectedCategoryName when dropdown changes
+    if (this.selectedCategoryId) {
+      const category = this.categories.find(c => c.id === this.selectedCategoryId);
+      this.selectedCategoryName = category ? category.name : null;
+    } else {
+      this.selectedCategoryName = null;
+    }
+    this.applyFilters();
+  }
+
+  clearCategoryFilter(): void {
+    this.selectedCategoryId = null;
+    this.selectedCategoryName = null;
     this.applyFilters();
   }
 
@@ -129,8 +159,12 @@ export class UserProductListComponent implements OnInit {
       );
     }
 
-    // Apply category filter
-    if (this.selectedCategoryId !== null) {
+    // Apply category filter by name (from query params) or by ID (from dropdown)
+    if (this.selectedCategoryName) {
+      filtered = filtered.filter(product => 
+        product.categoryName?.toLowerCase() === this.selectedCategoryName!.toLowerCase()
+      );
+    } else if (this.selectedCategoryId !== null) {
       filtered = filtered.filter(product => 
         product.categoryId === this.selectedCategoryId
       );

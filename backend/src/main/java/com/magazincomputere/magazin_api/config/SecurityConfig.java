@@ -93,7 +93,6 @@ public class SecurityConfig {
 
                 // Rules for Users, Customers and Reports (Admin only)
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/users/**")).hasRole("ADMIN")
-                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/customers/**")).hasRole("ADMIN")
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/api/reports/**")).hasRole("ADMIN")
                 
                 // Permit static files for the frontend

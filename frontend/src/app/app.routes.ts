@@ -37,7 +37,7 @@ import { UserProfileComponent } from './features/user-profile/user-profile.compo
 
 export const routes: Routes = [
   // Pagina principala (default), publica
-  { path: '', component: HomePageComponent, title: 'VipeX Technology' },
+  { path: '', component: HomePageComponent, title: 'VectorPC' },
 
   // Ruta de autentificare
   { path: 'login', component: LoginComponent, title: 'Autentificare' },

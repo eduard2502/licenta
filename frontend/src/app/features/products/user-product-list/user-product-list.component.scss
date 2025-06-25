@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 20px;
 
@@ -17,6 +17,12 @@
     margin: 0;
     font-size: 2em;
     flex-shrink: 0;
+    
+    .product-count {
+      font-size: 0.6em;
+      color: #666;
+      font-weight: normal;
+    }
   }
 
   .filters-container {
@@ -41,6 +47,32 @@
   }
 }
 
+.active-filters {
+  margin-bottom: 20px;
+  
+  mat-chip-listbox {
+    display: flex;
+    gap: 8px;
+  }
+  
+  mat-chip-option {
+    cursor: pointer;
+    background-color: #1976d2;
+    color: white;
+    
+    &:hover {
+      background-color: #1565c0;
+    }
+    
+    mat-icon {
+      font-size: 18px;
+      height: 18px;
+      width: 18px;
+      margin-right: 4px;
+    }
+  }
+}
+
 .loading-indicator,
 .error-message,
 .no-data {
@@ -49,6 +81,20 @@
 
   mat-spinner {
     margin: 0 auto 20px;
+  }
+  
+  mat-icon {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    color: #bdbdbd;
+    margin: 0 auto 20px;
+  }
+  
+  p {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 20px;
   }
 }
 
@@ -64,7 +110,6 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  // Remove dark background
 
   &:hover {
     transform: translateY(-4px);
@@ -84,8 +129,8 @@
     img {
       width: 100%;
       height: 100%;
-      object-fit: contain; // or 'contain' if you want to show the entire image
-      display: block; // Ensure it's a block element
+      object-fit: contain;
+      display: block;
     }
 
     mat-icon {

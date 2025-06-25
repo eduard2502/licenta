@@ -1,49 +1,63 @@
 <div class="home-container">
-
+  <!-- Hero Section with VectorPC Banner -->
   <section class="hero-section">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <div class="text-content">
-        <h1>Dive into immersive gaming</h1>
-        <p>Feel every explosion, every step, and every sound detail with the new VipeX gaming headsets.</p>
-        <button mat-flat-button color="primary">Vezi oferta</button>
+    <div class="hero-banner">
+      <img src="C:\Users\eduar\Desktop\Licenta\frontend\src\assets\images\banner.jpg" alt="VectorPC Banner" class="banner-image">
+      <div class="hero-overlay">
       </div>
     </div>
   </section>
 
-  <main class="selection-section">
-    <h2 class="section-title">Our selection</h2>
-
+  <!-- Products by Category -->
+  <main class="main-content">
     <div *ngIf="isLoading" class="loading-indicator">
       <mat-spinner diameter="60"></mat-spinner>
     </div>
-    
-    <div class="product-grid" *ngIf="!isLoading && products.length > 0">
-      <mat-card *ngFor="let product of products" class="product-card" [routerLink]="['/products', product.id]">
-        <div class="product-image-container">
-           <img *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name">
-            <mat-icon *ngIf="!product.imageBase64">inventory_2</mat-icon>
-        </div> 
-        <mat-card-header>
-          <mat-card-title>{{ product.name }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="product-price">{{ product.price | currency:'RON' }}</p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-stroked-button color="primary">Add to cart</button>
-        </mat-card-actions>
-      </mat-card>
+
+    <div *ngIf="!isLoading && groupedProducts">
+      <!-- Loop through each category -->
+      <section *ngFor="let category of productCategories" class="category-section">
+        <h2 class="category-title">{{ category }}</h2>
+        
+        <!-- Products Grid - All same size -->
+        <div class="products-grid" *ngIf="groupedProducts[category] && groupedProducts[category].length > 0">
+          <div *ngFor="let product of groupedProducts[category].slice(0, 6)" 
+               class="product-item"
+               [routerLink]="['/products', product.id]">
+            <div class="product-image-box">
+              <img *ngIf="product.imageBase64" 
+                   [src]="product.imageBase64" 
+                   [alt]="product.name">
+              <mat-icon *ngIf="!product.imageBase64">memory</mat-icon>
+            </div>
+            <h3>{{ product.name }}</h3>
+            <p class="product-price">{{ product.price | currency:'RON' }}</p>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!groupedProducts[category] || groupedProducts[category].length === 0">
+          <p>Nu există produse disponibile în această categorie</p>
+        </div>
+      </section>
+
+      <!-- Single View All Button at the bottom -->
+      <div class="view-all-section">
+        <button mat-raised-button 
+                color="primary" 
+                class="view-all-button"
+                (click)="viewAllProducts()">
+          <mat-icon>inventory_2</mat-icon>
+          Vezi toate produsele
+        </button>
+      </div>
+    </div>
+
+    <!-- If no products at all -->
+    <div *ngIf="!isLoading && (!products || products.length === 0)" class="empty-state">
+      <mat-icon>inventory_2</mat-icon>
+      <h3>Nu există produse disponibile</h3>
+      <p>Vă rugăm să reveniți mai târziu.</p>
     </div>
   </main>
-
-  <section class="social-section">
-    <h2 class="section-title">Be connected. Be VipeX.</h2>
-    <div class="social-icons">
-      <a href="#" class="social-icon-box">X</a>
-      <a href="#" class="social-icon-box">O</a>
-      <a href="#" class="social-icon-box">f</a>
-    </div>
-  </section>
-
 </div>

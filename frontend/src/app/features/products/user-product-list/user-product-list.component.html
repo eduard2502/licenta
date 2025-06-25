@@ -1,9 +1,18 @@
 <!-- frontend/src/app/features/products/user-product-list/user-product-list.component.html -->
 <div class="user-product-list-container">
   <div class="header">
-    <h2>Produsele Noastre</h2>
+    <h2>
+      {{ selectedCategoryName ? selectedCategoryName : 'Produsele Noastre' }}
+      <span *ngIf="!isLoading && filteredProducts.length > 0" class="product-count">
+        ({{ filteredProducts.length }} {{ filteredProducts.length === 1 ? 'produs' : 'produse' }})
+      </span>
+    </h2>
     <div class="filters-container">
-      
+      <mat-form-field appearance="outline" class="filter-field search-field">
+        <mat-label>Caută produse</mat-label>
+        <input matInput type="text" [(ngModel)]="searchText" (input)="applyFilter($event)">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
       
       <mat-form-field appearance="outline" class="filter-field category-field">
         <mat-label>Filtrează după categorie</mat-label>
@@ -17,6 +26,16 @@
     </div>
   </div>
 
+  <!-- Active filter chip -->
+  <div class="active-filters" *ngIf="selectedCategoryName && !isLoading">
+    <mat-chip-listbox>
+      <mat-chip-option [selected]="true" (click)="clearCategoryFilter()">
+        <mat-icon>close</mat-icon>
+        {{ selectedCategoryName }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </div>
+
   <div *ngIf="isLoading" class="loading-indicator">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Se încarcă produsele...</p>
@@ -28,16 +47,20 @@
   </div>
 
   <div *ngIf="!isLoading && !error && filteredProducts.length === 0" class="no-data">
-    <p>Nu există produse disponibile momentan.</p>
+    <mat-icon>inventory_2</mat-icon>
+    <p>Nu există produse disponibile {{ selectedCategoryName ? 'în categoria "' + selectedCategoryName + '"' : 'momentan' }}.</p>
+    <button mat-flat-button color="primary" (click)="clearCategoryFilter()" *ngIf="selectedCategoryName">
+      Vezi toate produsele
+    </button>
   </div>
 
   <!-- Grid View for Products -->
   <div class="products-grid" *ngIf="!isLoading && !error && filteredProducts.length > 0">
     <mat-card *ngFor="let product of getPaginatedProducts()" class="product-card">
-       <div class="product-image" [routerLink]="['/products', product.id]">
-    <img *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name">
-    <mat-icon *ngIf="!product.imageBase64">inventory_2</mat-icon>
-  </div>
+      <div class="product-image" [routerLink]="['/products', product.id]">
+        <img *ngIf="product.imageBase64" [src]="product.imageBase64" [alt]="product.name">
+        <mat-icon *ngIf="!product.imageBase64">inventory_2</mat-icon>
+      </div>
       
       <mat-card-header [routerLink]="['/products', product.id]">
         <mat-card-title>{{ product.name }}</mat-card-title>
