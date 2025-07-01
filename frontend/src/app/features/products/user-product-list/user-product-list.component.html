@@ -8,14 +8,19 @@
       </span>
     </h2>
     <div class="filters-container">
+      <!-- Search field -->
       <mat-form-field appearance="outline" class="filter-field search-field">
         <mat-label>Caută produse</mat-label>
-        <input matInput type="text" [(ngModel)]="searchText" (input)="applyFilter($event)">
+        <input matInput 
+               [(ngModel)]="searchText" 
+               (input)="applyFilter($event)"
+               placeholder="Nume, categorie, descriere...">
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
-      
+
+      <!-- Category filter -->
       <mat-form-field appearance="outline" class="filter-field category-field">
-        <mat-label>Filtrează după categorie</mat-label>
+        <mat-label>Categorie</mat-label>
         <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="applyCategoryFilter()">
           <mat-option [value]="null">Toate categoriile</mat-option>
           <mat-option *ngFor="let category of categories" [value]="category.id">
@@ -23,15 +28,102 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+      <!-- Sort by -->
+      <mat-form-field appearance="outline" class="filter-field sort-field">
+        <mat-label>Sortează după</mat-label>
+        <mat-select [(ngModel)]="sortBy" (selectionChange)="onSortChange()">
+          <mat-option value="default">Implicit</mat-option>
+          <mat-option value="price-asc">Preț crescător</mat-option>
+          <mat-option value="price-desc">Preț descrescător</mat-option>
+          <mat-option value="name-asc">Nume A-Z</mat-option>
+          <mat-option value="name-desc">Nume Z-A</mat-option>
+          <mat-option value="stock">Stoc disponibil</mat-option>
+          <mat-option value="rating">Cele mai apreciate</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Price range filters -->
+      <mat-form-field appearance="outline" class="filter-field price-field">
+        <mat-label>Preț minim (RON)</mat-label>
+        <input matInput 
+               type="number" 
+               [(ngModel)]="minPrice" 
+               (change)="applyFilters()"
+               placeholder="0">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field price-field">
+        <mat-label>Preț maxim (RON)</mat-label>
+        <input matInput 
+               type="number" 
+               [(ngModel)]="maxPrice" 
+               (change)="applyFilters()"
+               placeholder="9999">
+      </mat-form-field>
+
+      <!-- Rating filter -->
+      <mat-form-field appearance="outline" class="filter-field rating-field">
+        <mat-label>Rating minim</mat-label>
+        <mat-select [(ngModel)]="minRating" (selectionChange)="applyFilters()">
+          <mat-option [value]="null">Toate produsele</mat-option>
+          <mat-option [value]="4">★★★★ și mai mult</mat-option>
+          <mat-option [value]="3">★★★ și mai mult</mat-option>
+          <mat-option [value]="2">★★ și mai mult</mat-option>
+          <mat-option [value]="1">★ și mai mult</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Stock filter -->
+      <mat-checkbox 
+        [(ngModel)]="showInStockOnly" 
+        (change)="applyFilters()"
+        class="stock-checkbox">
+        Doar produse în stoc
+      </mat-checkbox>
+
+      <!-- Clear filters button -->
+      <button mat-stroked-button 
+              color="warn" 
+              (click)="clearAllFilters()"
+              *ngIf="selectedCategoryId || searchText || sortBy !== 'default' || minPrice || maxPrice || showInStockOnly || minRating">
+        <mat-icon>clear</mat-icon>
+        Șterge filtre
+      </button>
     </div>
   </div>
 
-  <!-- Active filter chip -->
-  <div class="active-filters" *ngIf="selectedCategoryName && !isLoading">
+  <!-- Active filters chips -->
+  <div class="active-filters" *ngIf="!isLoading && (selectedCategoryName || searchText || sortBy !== 'default' || minPrice !== null || maxPrice !== null || showInStockOnly || minRating !== null)">
     <mat-chip-listbox>
-      <mat-chip-option [selected]="true" (click)="clearCategoryFilter()">
+      <mat-chip-option *ngIf="selectedCategoryName" [selected]="true" (click)="clearCategoryFilter()">
         <mat-icon>close</mat-icon>
-        {{ selectedCategoryName }}
+        Categorie: {{ selectedCategoryName }}
+      </mat-chip-option>
+      
+      <mat-chip-option *ngIf="searchText" [selected]="true" (click)="searchText = ''; applyFilters()">
+        <mat-icon>close</mat-icon>
+        Căutare: "{{ searchText }}"
+      </mat-chip-option>
+      
+      <mat-chip-option *ngIf="sortBy !== 'default'" [selected]="true" (click)="sortBy = 'default'; applyFilters()">
+        <mat-icon>close</mat-icon>
+        Sortare: {{ getSortLabel() }}
+      </mat-chip-option>
+      
+      <mat-chip-option *ngIf="minPrice !== null || maxPrice !== null" [selected]="true" (click)="minPrice = null; maxPrice = null; applyFilters()">
+        <mat-icon>close</mat-icon>
+        Preț: {{ minPrice || 0 }} - {{ maxPrice || '∞' }} RON
+      </mat-chip-option>
+      
+      <mat-chip-option *ngIf="minRating" [selected]="true" (click)="minRating = null; applyFilters()">
+        <mat-icon>close</mat-icon>
+        Rating: {{ minRating }}★ și mai mult
+      </mat-chip-option>
+      
+      <mat-chip-option *ngIf="showInStockOnly" [selected]="true" (click)="showInStockOnly = false; applyFilters()">
+        <mat-icon>close</mat-icon>
+        Doar în stoc
       </mat-chip-option>
     </mat-chip-listbox>
   </div>
@@ -48,9 +140,9 @@
 
   <div *ngIf="!isLoading && !error && filteredProducts.length === 0" class="no-data">
     <mat-icon>inventory_2</mat-icon>
-    <p>Nu există produse disponibile {{ selectedCategoryName ? 'în categoria "' + selectedCategoryName + '"' : 'momentan' }}.</p>
-    <button mat-flat-button color="primary" (click)="clearCategoryFilter()" *ngIf="selectedCategoryName">
-      Vezi toate produsele
+    <p>Nu există produse disponibile {{ selectedCategoryName ? 'în categoria "' + selectedCategoryName + '"' : 'care să corespundă filtrelor selectate' }}.</p>
+    <button mat-flat-button color="primary" (click)="clearAllFilters()">
+      Șterge toate filtrele
     </button>
   </div>
 
@@ -73,6 +165,16 @@
           <p class="stock" [class.in-stock]="product.stockQuantity > 0" [class.out-of-stock]="product.stockQuantity === 0">
             {{ product.stockQuantity > 0 ? 'În stoc: ' + product.stockQuantity + ' buc.' : 'Stoc epuizat' }}
           </p>
+        </div>
+        
+        <div class="product-rating" *ngIf="product.averageRating">
+          <div class="stars">
+            <mat-icon *ngFor="let filled of getStarArray(product.averageRating)" 
+                      [class.filled]="filled">
+              {{ filled ? 'star' : 'star_border' }}
+            </mat-icon>
+          </div>
+          <span class="rating-text">{{ product.averageRating | number:'1.1-1' }} ({{ product.reviewCount || 0 }})</span>
         </div>
         
         <div class="product-description" *ngIf="product.description">

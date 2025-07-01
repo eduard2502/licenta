@@ -35,9 +35,9 @@ public class OrderItem {
     @Column(nullable = false)
     private String productNameSnapshot;
 
-    // @Lob
-    // @Column(columnDefinition = "TEXT")
-    // private String productImageBase64Snapshot; // COMENTAT TEMPORAR
+     @Lob
+     @Column(columnDefinition = "LONGTEXT")
+     private String productImageBase64Snapshot; 
 
     @NotNull(message = "Cantitatea este obligatorie")
     @Min(value = 1, message = "Cantitatea trebuie să fie cel puțin 1")

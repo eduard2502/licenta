@@ -97,6 +97,7 @@
                 "glob": "**/*",
                 "input": "public"
               }
+              
             ],
             "styles": [
               "src/themes/dark-blue-theme.scss",

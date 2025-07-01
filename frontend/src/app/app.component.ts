@@ -39,7 +39,7 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'Magazin Calculatoare';
+  title = 'VectorPC';
   isLoggedIn = false;
   username: string | null = null;
   userRole: string | null = null;

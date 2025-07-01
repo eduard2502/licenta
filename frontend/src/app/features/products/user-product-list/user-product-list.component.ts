@@ -1,6 +1,6 @@
 // frontend/src/app/features/products/user-product-list/user-product-list.component.ts
 import { Component, OnInit, inject, ViewChild } from '@angular/core';
-import { CommonModule, CurrencyPipe, SlicePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, SlicePipe, DecimalPipe } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { Product } from '../../../shared/models/product.model';
 import { Category } from '../../../shared/models/category.model';
@@ -38,8 +39,10 @@ import { AddToCartRequest } from '../../../shared/models/cart.model';
     MatSnackBarModule,
     MatPaginatorModule,
     MatChipsModule,
+    MatCheckboxModule,
     CurrencyPipe,
-    SlicePipe
+    SlicePipe,
+    DecimalPipe
   ],
   templateUrl: './user-product-list.component.html',
   styleUrls: ['./user-product-list.component.scss']
@@ -54,6 +57,13 @@ export class UserProductListComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
   isAddingToCart: { [key: number]: boolean } = {};
+  
+  // Additional filter properties
+  sortBy: string = 'default';
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  showInStockOnly: boolean = false;
+  minRating: number | null = null;
   
   // Pagination
   pageSize = 12;
@@ -170,13 +180,94 @@ export class UserProductListComponent implements OnInit {
       );
     }
 
+    // Apply price range filter
+    if (this.minPrice !== null) {
+      filtered = filtered.filter(product => product.price >= this.minPrice!);
+    }
+    if (this.maxPrice !== null) {
+      filtered = filtered.filter(product => product.price <= this.maxPrice!);
+    }
+
+    // Apply stock filter
+    if (this.showInStockOnly) {
+      filtered = filtered.filter(product => product.stockQuantity > 0);
+    }
+
+    // Apply rating filter
+    if (this.minRating !== null) {
+      filtered = filtered.filter(product => 
+        (product.averageRating || 0) >= this.minRating!
+      );
+    }
+
     this.filteredProducts = filtered;
+
+    // Apply sorting
+    this.sortProducts();
 
     // Reset to first page when filtering
     this.pageIndex = 0;
     if (this.paginator) {
       this.paginator.firstPage();
     }
+  }
+
+  sortProducts(): void {
+    switch (this.sortBy) {
+      case 'price-asc':
+        this.filteredProducts.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        this.filteredProducts.sort((a, b) => b.price - a.price);
+        break;
+      case 'name-asc':
+        this.filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        this.filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'stock':
+        this.filteredProducts.sort((a, b) => b.stockQuantity - a.stockQuantity);
+        break;
+      case 'rating':
+        this.filteredProducts.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+        break;
+      default:
+        // Keep original order
+        break;
+    }
+  }
+
+  onSortChange(): void {
+    this.applyFilters();
+  }
+
+  clearAllFilters(): void {
+    this.selectedCategoryId = null;
+    this.selectedCategoryName = null;
+    this.searchText = '';
+    this.sortBy = 'default';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.showInStockOnly = false;
+    this.minRating = null;
+    this.applyFilters();
+  }
+
+  getSortLabel(): string {
+    const labels: { [key: string]: string } = {
+      'price-asc': 'Preț crescător',
+      'price-desc': 'Preț descrescător',
+      'name-asc': 'Nume A-Z',
+      'name-desc': 'Nume Z-A',
+      'stock': 'Stoc disponibil',
+      'rating': 'Cele mai apreciate'
+    };
+    return labels[this.sortBy] || '';
+  }
+
+  getStarArray(rating: number): boolean[] {
+    return [1, 2, 3, 4, 5].map(star => star <= rating);
   }
 
   onPageChange(event: PageEvent): void {

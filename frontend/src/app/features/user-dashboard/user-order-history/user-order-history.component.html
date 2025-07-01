@@ -48,24 +48,34 @@
 
         <mat-divider></mat-divider>
         <h4>Articole Comandate:</h4>
-        <mat-list role="list" class="order-items-list">
-          <mat-list-item *ngFor="let item of order.orderItems" role="listitem" class="order-item-detail">
-            <!-- Secțiunea Imagine Articol - COMENTATĂ TEMPORAR -->
-            <!--
-            <img matListItemAvatar *ngIf="item.productImageBase64Snapshot" [src]="item.productImageBase64Snapshot" [alt]="item.productNameSnapshot" class="item-image-small">
-            <mat-icon matListItemAvatar *ngIf="!item.productImageBase64Snapshot">inventory_2</mat-icon>
-            -->
-            <mat-icon matListItemAvatar>inventory_2</mat-icon> <!-- Placeholder generic -->
+     <mat-list role="list" class="order-items-list">
+  <mat-list-item *ngFor="let item of order.orderItems" role="listitem" class="order-item-detail">
+    <!-- Product Image Section -->
+    <div matListItemAvatar class="item-image-container">
+      <img *ngIf="item.productImageBase64Snapshot" 
+           [src]="item.productImageBase64Snapshot" 
+           [alt]="item.productNameSnapshot" 
+           class="item-image">
+      <mat-icon *ngIf="!item.productImageBase64Snapshot" class="item-image-placeholder">
+        inventory_2
+      </mat-icon>
+    </div>
 
-            <span matListItemTitle>{{ item.productNameSnapshot }} (ID: {{ item.productId }})</span>
-            <span matListItemLine>
-              Cantitate: {{ item.quantity }} x {{ item.priceAtPurchase | currency:'RON':'symbol':'1.2-2' }}
-            </span>
-            <span matListItemMeta class="item-subtotal-small">
-              Subtotal: {{ calculateItemSubtotal(item) | currency:'RON':'symbol':'1.2-2' }}
-            </span>
-          </mat-list-item>
-        </mat-list>
+    <div matListItemTitle class="item-title">
+      {{ item.productNameSnapshot }}
+      <span class="product-id">(ID: {{ item.productId }})</span>
+    </div>
+    
+    <div matListItemLine class="item-details">
+      <span class="quantity">Cantitate: {{ item.quantity }}</span>
+      <span class="price">× {{ item.priceAtPurchase | currency:'RON':'symbol':'1.2-2' }}</span>
+    </div>
+    
+    <span matListItemMeta class="item-subtotal">
+      Subtotal: {{ calculateItemSubtotal(item) | currency:'RON':'symbol':'1.2-2' }}
+    </span>
+  </mat-list-item>
+</mat-list>
       </div>
     </mat-expansion-panel>
   </mat-accordion>

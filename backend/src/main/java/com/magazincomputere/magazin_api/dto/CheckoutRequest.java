@@ -27,7 +27,7 @@ public class CheckoutRequest {
     private String shippingAddress; // Poate fi diferită de billing address
     
     @NotBlank(message = "Metoda de plată este obligatorie")
-    @Pattern(regexp = "^(CARD|CASH_ON_DELIVERY|BANK_TRANSFER)$", message = "Metodă de plată invalidă")
+    @Pattern(regexp = "^(CASH_ON_DELIVERY|PAYPAL)$", message = "Metodă de plată invalidă")
     private String paymentMethod;
     
     private String orderNotes;
