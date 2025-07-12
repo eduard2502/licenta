@@ -100,7 +100,7 @@
               
             ],
             "styles": [
-              "src/themes/dark-blue-theme.scss",
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []

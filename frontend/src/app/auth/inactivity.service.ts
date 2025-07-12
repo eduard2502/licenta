@@ -11,7 +11,7 @@ export class InactivityService {
   private authService = inject(AuthService);
   private router = inject(Router);
   
-  private inactivityTime = 30 * 60 * 1000; // 30 minutes
+  private inactivityTime = 60 * 60 * 1000; // 1 hour
   private destroy$ = new Subject<void>();
   private timer$ = new Subject<void>();
 

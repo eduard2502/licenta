@@ -79,7 +79,8 @@ export class AppComponent implements OnInit, OnDestroy {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.hideToolbar = event.urlAfterRedirects === '/login' || event.urlAfterRedirects.startsWith('/signup');
+        this.hideToolbar = event.urlAfterRedirects === '/login' || event.urlAfterRedirects.startsWith('/signup')||
+                      event.urlAfterRedirects.startsWith('/admin');;
       }
     });
   }

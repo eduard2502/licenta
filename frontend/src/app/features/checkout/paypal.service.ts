@@ -11,7 +11,7 @@ export class PayPalService {
     if (!this.paypalLoaded) {
       const paypal = await loadScript({
         clientId: clientId,
-        currency: 'USD', // Change to RON if supported
+        currency: 'EUR', // Change to RON if supported
         intent: 'capture'
       });
       this.paypalLoaded = true;

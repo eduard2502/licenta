@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { HomePageComponent } from './home-page.component';
 
@@ -8,7 +11,13 @@ describe('HomePageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomePageComponent]
+      imports: [HomePageComponent],
+      providers: [
+        // Adaugă providerii necesari pentru HttpClient și Router
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+      ]
     })
     .compileComponents();
 

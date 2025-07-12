@@ -84,7 +84,7 @@ export class CartService {
   createPayPalOrder(amount: number): Observable<any> {
   return this.http.post(`${this.apiUrl}/paypal/create-order`, {
     amount: amount,
-    currency: 'USD' // Change to RON if needed
+    currency: 'EUR' // Change to RON if needed
   }).pipe(catchError(this.handleError));
 }
 
